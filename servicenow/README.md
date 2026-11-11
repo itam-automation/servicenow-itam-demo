@@ -22,4 +22,15 @@ Milestone 2, captured in the update set **«ITAM Demo - Meilenstein 2 Laptop-Anf
 | ATF test «ITAM: Lifecycle-Status Hardware-Asset» | `sys_atf_test`, `sys_atf_step` | [`atf_lifecycle_test.js`](atf_lifecycle_test.js); test execution enabled via `sn_atf.runner.enabled` |
 | Group «Muster AG IT-Asset-Management» | `sys_user_group` (data, not in the update set) | approver and assignment group; member: admin |
 
-The staging tables and transform maps are generated from one definition, [`loader/staging.py`](../loader/staging.py) (`python3 loader/staging.py` prints the full specification including the scripts). Exporting the update set as XML into this folder is planned for milestone 2.
+The staging tables and transform maps are generated from one definition, [`loader/staging.py`](../loader/staging.py) (`python3 loader/staging.py` prints the full specification including the scripts).
+
+## Update sets as XML
+
+Both update sets are exported in [`update_sets/`](update_sets/):
+
+| File | Content |
+|---|---|
+| `ITAM_Demo_Baustein2_CMDB-Import.xml` | 152 customer updates: data sources, reconciliation rule, 5 staging tables with columns, 5 transform maps with field maps and scripts, 10 reports |
+| `ITAM_Demo_Meilenstein2_Laptop-Anforderung.xml` | 15 customer updates: catalog item with variables, flow, business rule, fix script, ATF test, ATF property |
+
+To install on another instance: *System Update Sets → Retrieved Update Sets → Import Update Set from XML*, then *Preview* and *Commit* (first Baustein 2, then Meilenstein 2). The group «Muster AG IT-Asset-Management» is data and has to be created separately.
