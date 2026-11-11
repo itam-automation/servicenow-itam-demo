@@ -36,7 +36,7 @@ Milestone 3 (software asset management), captured in the update set **«ITAM Dem
 | Scripted REST API «ITAM Demo» | `sys_ws_definition`, `sys_ws_operation` | `GET /license_position`, [`rest_license_position.js`](rest_license_position.js); requires authentication and the default REST ACL; the base path contains the instance's namespace and is configured in `.env` (`SN_ITAM_API`) |
 | Column types of the staging tables | `sys_dictionary` | set to `string` by name (they had been created with the type's sys_id) |
 
-Import check on the source data, captured in the update set **«ITAM Demo - DQ Importprüfung»** (not exported as XML yet):
+Import check on the source data, captured in the update set **«ITAM Demo - DQ Importprüfung»**:
 
 | Item | Table | Details |
 |---|---|---|
@@ -49,14 +49,15 @@ The staging tables and transform maps are generated from one definition, [`loade
 
 ## Update sets as XML
 
-All three update sets are exported in [`update_sets/`](update_sets/):
+All four update sets are exported in [`update_sets/`](update_sets/):
 
 | File | Content |
 |---|---|
 | `ITAM_Demo_Baustein2_CMDB-Import.xml` | 152 customer updates: data sources, reconciliation rule, 5 staging tables with columns, 5 transform maps with field maps and scripts, 10 reports |
 | `ITAM_Demo_Meilenstein2_Laptop-Anforderung.xml` | 15 customer updates: catalog item with variables, flow, business rule, fix script, ATF test, ATF property |
+| `ITAM_Demo_DQ_Importpruefung.xml` | 4 customer updates: column `u_dq_findings`, onBefore script of the device map with the import check, report «ITAM DQ 8» |
 | `ITAM_Demo_Meilenstein3_SAM.xml` | 143 customer updates: 2 script includes, 3 staging tables and transform maps with scripts, table «ITAM Lizenzposition» with list layout, scheduled job, 2 reports, Scripted REST API, column type fix for the staging tables |
 
-To install on another instance: *System Update Sets → Retrieved Update Sets → Import Update Set from XML*, then *Preview* and *Commit* (Baustein 2, Meilenstein 2, Meilenstein 3 in this order). The group «Muster AG IT-Asset-Management» is data and has to be created separately.
+To install on another instance: *System Update Sets → Retrieved Update Sets → Import Update Set from XML*, then *Preview* and *Commit* (Baustein 2, Meilenstein 2, Meilenstein 3, DQ Importprüfung in this order). The group «Muster AG IT-Asset-Management» is data and has to be created separately.
 
 Two things to know about Meilenstein 3: scheduled jobs (`sysauto_script`) are not captured by update sets on this release (`update_synch=false`), so the job was added explicitly with `GlideUpdateManager2().saveRecord()`. The Scripted REST API carries the namespace of the source instance in its base path; after importing, check the path and set `SN_ITAM_API` in `.env` accordingly.
