@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/itam-automation/servicenow-itam-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/itam-automation/servicenow-itam-demo/actions/workflows/ci.yml)
 
-> **Kurzfassung:** Portfolio-Projekt zu IT Asset Management auf einer persönlichen ServiceNow-Entwicklerinstanz (Release Brazil). Erfundene Testdaten der «Muster AG» (200 Geräte, 130 Benutzer, zwei Datenquellen) laufen über Import Sets mit Transform Maps in die CMDB. Die Identification and Reconciliation Engine (IRE) führt Dubletten aus dem Netzwerk-Scan zusammen. Reports in ServiceNow und ein Python-Check messen die Datenqualität gegen eine bekannte Wahrheit: **53 von 53 eingebauten Fehlern erkannt** (9 Dubletten von der IRE zusammengeführt, 41 von den Reports auf der CMDB gefunden, 3 von einer Prüfung der Quelldaten beim Import gemeldet, weil die Plattform sie beim Laden stillschweigend bereinigt und die CMDB sie nicht mehr zeigt). Ein Catalog Item «Laptop anfordern» mit Flow, Business Rule und ATF-Test weist Lagergeräte zu. Software Asset Management ohne SAM Pro: 582 Installationen und 8 Lizenzen ergeben in ServiceNow eine Lizenzposition je Produkt, **9 von 9 stimmen mit der bekannten Wahrheit überein**. Fragen an diese Daten laufen über eine Werkzeugschicht, die technisch nur lesen kann; 5 Testfragen stimmen mit der bekannten Wahrheit überein, 2 unzulässige Anfragen wurden abgewiesen. Alle Daten sind erfunden.
+> **Kurzfassung:** Portfolio-Projekt zu IT Asset Management auf einer persönlichen ServiceNow-Entwicklerinstanz (Release Brazil). Erfundene Testdaten der «Muster AG» (200 Geräte, 130 Benutzer, zwei Datenquellen) laufen über Import Sets mit Transform Maps in die CMDB. Die Identification and Reconciliation Engine (IRE) führt Dubletten aus dem Netzwerk-Scan zusammen. Reports in ServiceNow und ein Python-Check messen die Datenqualität gegen eine bekannte Wahrheit: **53 von 53 eingebauten Fehlern erkannt** (9 Dubletten von der IRE zusammengeführt, 41 von den Reports auf der CMDB gefunden, 3 von einer Prüfung der Quelldaten beim Import gemeldet, weil die Plattform sie beim Laden stillschweigend bereinigt und die CMDB sie nicht mehr zeigt). Ein Catalog Item «Laptop anfordern» mit Flow, Business Rule und ATF-Test weist Lagergeräte zu. Software Asset Management ohne SAM Pro: 582 Installationen und 8 Lizenzen ergeben in ServiceNow eine Lizenzposition je Produkt, **9 von 9 stimmen mit der bekannten Wahrheit überein**. Fragen an diese Daten laufen über eine Werkzeugschicht, die technisch nur lesen kann; 5 Testfragen stimmen mit der bekannten Wahrheit überein, 2 unzulässige Anfragen wurden abgewiesen. Darauf baut das **ITAM-Toolkit**, eine Scoped App für ServiceNow Core ohne HAM Pro und SAM Pro: Modul 1 sorgt dafür, dass Geräte von Austretenden zurückkommen (Fall je Austritt, Rückgabe-Aufgabe je Gerät, Erinnerungen an Tag 3, 7 und 14, Rückgabequote und Durchlaufzeit als Nachweis für ISO 27001 A.5.11), Modul 2 misst die Datenqualität mit 15 konfigurierbaren Regeln als gewichteten Score und findet Abweichungen zwischen Asset- und CI-Status. Der Score aus ServiceNow stimmt mit der unabhängigen Nachrechnung in Python überein (90.84 und 91.11), die ATF-Tests bestehen (73/73, 45/45). Alle Daten sind erfunden.
 
 ## Status
 
@@ -14,6 +14,7 @@
 | 3 | Catalog item «Laptop anfordern» with Flow Designer, business rule, ATF test | **done** |
 | 4 | Software Asset Management: installations, licenses, license position (compliance) | **done** |
 | 5 | AI assistant, technically read-only | **done**: read-only tool layer with guardrails; 7 test questions answered from Claude Code through it ([`docs/assistant_questions.md`](docs/assistant_questions.md)) |
+| 6 | **ITAM Toolkit** (scoped app for ServiceNow Core): leaver asset return, asset/CI drift and DQ scorecard | **0.1.0**: [catalog](docs/catalog.md), [limitations](docs/limitations.md) |
 
 ## Demo
 
@@ -167,6 +168,95 @@ python3 assistant/assistant.py --use-loader-user --tool count_records \
 python3 assistant/assistant.py "Wo sind wir unterlizenziert?"
 ```
 
+## ITAM Toolkit for ServiceNow Core (scoped app)
+
+A scoped app (`x_371499_itamkit`, 0.1.0) for organisations that run IT asset management on ServiceNow **without HAM Pro or SAM Pro**. Built and tested on the personal developer instance with the Muster AG test data, not in a customer project. Every artifact is listed in [`docs/catalog.md`](docs/catalog.md), the limits in [`docs/limitations.md`](docs/limitations.md); the sources are in [`toolkit/`](toolkit/).
+
+**Foundation.** One output contract for every building block, `{success, status_code, message, data}` with HTTP-like codes (201 created, 208 already done, 409 conflict, 422 invalid configuration). Every configurable encoded query is checked field by field before use, because ServiceNow silently drops unknown fields. Changes to records the toolkit does not own go to an audit log with old value, new value and reason. Scripted REST API with six resources, two roles, 28 ACLs, 26 cross-scope privileges declared explicitly. The scripts never hard-code the vendor prefix; table and property names are derived from the running scope.
+
+### Module 1: Leaver Asset Return
+
+Asset return compliance, not an offboarding app: when someone leaves, every device still assigned to them must come back or be reported lost, and that must be provable (ISO/IEC 27001:2022, A.5.11 «Return of assets»).
+
+- **Three triggers.** HR reports the leaver with the last working day in the record producer **«Austritt melden»** (primary); a business rule reacts when `sys_user.active` changes to false; a nightly sweep catches deactivations that bypassed the rule (imports, mass changes).
+- **One case per leaver, one `asset_task` per device**, created by the idempotent script include `LeaverAssetResolver` (a second call answers 208 and creates nothing).
+- **Four end states** from the platform's own values: *In stock / Available*, *In stock / Pending repair*, *In stock / Pending disposal*, *Missing / Lost* (one button each on the return task).
+- **Reminders on day 3, 7 and 14** after the last working day to the manager and the HR contact (the leaver is inactive and receives no mail), optionally to a private address; day 14 escalates to the manager's manager (`sys_user.manager`).
+- **KPIs:** return rate and cycle time (last working day to closure), via REST and reports.
+
+Demo on the PDI with the four Muster AG leavers: HR reported Simon Steiner eight days late; the nightly sweep found the other three. The day-7 reminder was generated as an e-mail record (outbound mail is switched off on the PDI, so it was never sent).
+
+| | |
+|---|---|
+| Cases | 4 (1 reported by HR, 3 found by the sweep), 3 closed, 1 open |
+| Return rate (closed cases) | 66.67 % (2 of 3 devices returned, 1 reported lost) |
+| Cycle time | 2.7 days on average, 8 days at most (the late report); 100 % closed by day 14 |
+| Reminder | 1 (day 7), `sys_email` record in the outbox, type *send-ready*, to the HR contact and the private address |
+| ATF test | 73 of 73 assertions passed |
+
+| Leaver case after the return | Return task with the four outcomes | Reminder as e-mail record (body hidden in the screenshot: it contains the instance link) |
+|---|---|---|
+| ![Leaver case](docs/screenshots/10_toolkit_leaver_case_closed.jpg) | ![Return task](docs/screenshots/11_toolkit_return_task_buttons.jpg) | ![Reminder e-mail](docs/screenshots/12_toolkit_reminder_email.jpg) |
+
+**Compared with HAM Pro «Reclaim Asset»** (plugin `sn_hamp`, not installed on the PDI; based on the ServiceNow documentation, not tested here):
+
+| | ITAM Toolkit, module 1 (Core) | HAM Pro «Reclaim Asset» |
+|---|---|---|
+| Licence | ServiceNow Core only | Hardware Asset Management Professional |
+| Start | record producer for HR, deactivation of the user, nightly sweep | catalog item «Reclaim Asset» (HR, manager, employee) |
+| Per device | one `asset_task` with four outcome buttons | reclamation line per device, reclamation tasks for drop-off, pickup or shipment |
+| Software | not covered | software reclamation lines for returned devices and the user |
+| Leavers missed by HR | nightly sweep over inactive users with hardware | not described |
+| Reminders and escalation | day 3, 7, 14, to manager and HR, private address optional | not described in the pages consulted |
+| KPIs | return rate, cycle time, on time; REST and reports | not described in the pages consulted |
+| Shipping, logistics | none | part of the reclamation tasks |
+
+If HAM Pro is licensed, its reclamation is the better choice; the toolkit is for the many installations that run ITAM on Core.
+
+### Module 2: Asset↔CI Drift & DQ Scorecard
+
+- **Configurable rule table** (table, population and defect condition, dimension, weight, group, remediation hint) with **15 generic rules** on CIs, assets and users, no company names. Rule types: query, duplicate values, field mismatch (for example manufacturer vs. the model's manufacturer), asset/CI drift.
+- **Weighted score** per scorecard (optionally per company), **nightly snapshot** with one result per rule; trend as a line report, without Performance Analytics.
+- **Drift watcher:** the target state is the platform's own asset/CI install status mapping (`alm_asset_ci_state_mapping`, 52 entries). The UI action **«Drift beheben»** asks which side leads, shows a preview of exactly that change, applies it, verifies it and writes the audit log.
+- **Independent check in Python** ([`loader/check_dq_scorecard.py`](loader/check_dq_scorecard.py)): its own encoded-query evaluator recomputes every rule from the raw records and compares population, defects and score; the rules that correspond to an injected error type are compared with the ground truth.
+
+| | |
+|---|---|
+| Baseline (Muster AG, before the toolkit demo) | score **90.84** in ServiceNow, **90.84** recomputed in Python; 15 of 15 rules equal ([report](docs/dq_scorecard_baseline.md)) |
+| Ground truth | the 7 matching generic rules find **41 of 44** injected issues of their types; the other 3 were corrected by the platform on load and are reported by the project's import check |
+| Biggest gap | U01: **126 of 126** active users have no manager, so escalations in module 1 cannot reach anybody in this data |
+| Drift demo | an integration user changed the status of two CIs (`loader/simulate_drift.py`); the platform did not pass it on to the assets; 2 findings, fixed once with the asset leading and once with the CI leading, 2 audit rows |
+| Trend on the demo day | 90.84 → 91.11 (leavers processed) → 91.00 (drift) → 91.11 (drift fixed), each recomputed: the final snapshot is equal too ([report](docs/dq_scorecard.md)) |
+| ATF test | 45 of 45 assertions passed |
+
+| Rule table | Snapshot with one result per rule | «Drift beheben» with the preview of the chosen side |
+|---|---|---|
+| ![DQ rules](docs/screenshots/13_toolkit_dq_rules.jpg) | ![DQ snapshot](docs/screenshots/14_toolkit_dq_snapshot_baseline.jpg) | ![Drift fix](docs/screenshots/15_toolkit_drift_fix_preview.jpg) |
+
+**Compared with existing options** (none installed on the PDI; based on the ServiceNow documentation and the vendor's pages):
+
+| | ITAM Toolkit, module 2 | CMDB success advisor for HAM | RapDev Asset & CI Insights | CSDM Data Foundations, «Crawl» |
+|---|---|---|---|---|
+| Needs | Core | HAM Pro (HAM licence categories) | free Store app | CMDB Workspace, no HAM licence |
+| Asset/CI status mismatch | yes, against the OOTB mapping, with findings | yes (install status vs. asset state) | not described | yes, life-cycle values of CI, asset and IBI |
+| Missing fields, duplicates | configurable rules | missing model, serial, location; duplicates | duplicates, broken references, orphaned records | fixed foundation indicators |
+| Own rules and weights | yes, rule table | no | no | no (fixed metrics with weights) |
+| Fix from the finding | «Drift beheben» with preview, leading side, audit log | not described in the pages consulted | tags records with findings | remediation playbooks (Now Support) |
+| Score over time | weighted score per snapshot, line report | HAM dashboard indicators | dashboard | compliance per indicator |
+| Independent recomputation | Python check against the raw records | no | no | no |
+
+The CMDB success advisor for HAM covers most of module 2 for customers with HAM Pro; module 2 is the configurable, testable equivalent for Core, plus the fix with audit trail.
+
+### Demo
+
+| 1. HR reports a leaver, the case gets a return task, the device comes back | 2. Drift fixed with the asset leading and with the CI leading |
+|---|---|
+| ![Leaver demo](docs/demo/demo_3_leaver_return.gif) | ![Drift demo](docs/demo/demo_4_drift_fix.gif) |
+
+Install: import [`servicenow/update_sets/ITAM_Toolkit_0.1.0.xml`](servicenow/update_sets/ITAM_Toolkit_0.1.0.xml), run the fix script «ITAM Toolkit: seed generic DQ rules», assign the roles, run the two ATF tests (details in the catalog). ATF result on the PDI:
+
+![ATF passed](docs/screenshots/16_toolkit_atf_passed.jpg)
+
 ## Findings on the platform
 
 Things the run made visible, each verified on the instance:
@@ -184,6 +274,8 @@ Things the run made visible, each verified on the instance:
 - **The license type of a software model is a reference** (`cmdb_sw_license_calculation`: *Per named user*, *Per workstation*, ...), and the integration user may not read it. The license position is therefore calculated on the platform and exposed through a read-only Scripted REST API instead of widening the integration user's rights.
 - **Column types must be given by name.** Columns created through the Table API with the `sys_glide_object` sys_id as type were silently created as strings: numbers were stored as «20.0» and sorted as text. Fixed by recreating the three integer columns with type `integer` (and setting the staging columns to `string`).
 - **Scheduled jobs are not captured by update sets** on this release (`sysauto_script` has `update_synch=false`). The job «ITAM: Lizenzposition berechnen» was added to the update set explicitly; without that it would be missing on the next instance.
+- **A CI status written by an integration does not reach the asset.** The platform syncs the asset status to the CI, not back. The ITAM Toolkit therefore compares both against the platform's own status mapping; on the PDI's demo data (not Muster AG) 120 of 1,091 assets drift.
+- **Runtime access tracking «Enforcing» gates Glide APIs too**, one by one (`GlideRecord.setValue`, `.insert`, `.update`, `Glide API: properties`, `ScopedGlideElement`), and a denied aggregate call returned a wrong count without an error. The toolkit runs in «Tracking» with all privileges declared; details in [`docs/limitations.md`](docs/limitations.md).
 - **Numbers from server-side JavaScript need care**: Rhino stores `20` as «20.0» in a string field, and a Scripted REST API that returns an object sends `5.0`; `String(...)` and `JSON.stringify` avoid both.
 
 ## Quickstart
@@ -196,6 +288,7 @@ python3 loader/check_connection.py
 python3 loader/load_testdata.py
 python3 loader/check_data_quality.py
 python3 loader/check_license_position.py
+python3 loader/check_dq_scorecard.py   # ITAM Toolkit scorecard vs. raw records (needs the toolkit role)
 ```
 
 Development:
@@ -213,8 +306,9 @@ testdata/     generator and generated CSV files, ground_truth.json
 loader/       REST client, Import Set loader, data quality and license position checks, reset script
 servicenow/   scripts that run on the instance, update sets as XML
 assistant/    read-only AI assistant (guardrails, tools, Claude loop)
-docs/         import run, data quality, license position, screenshots, demo GIFs
-tests/        pytest suite (generator, staging definitions, scripts, license position, assistant guardrails)
+toolkit/      ITAM Toolkit scoped app: script includes, rules, jobs, REST, ATF, bundle builder and deployer
+docs/         import run, data quality, license position, toolkit catalog and limitations, screenshots, demo GIFs
+tests/        pytest suite (generator, staging definitions, scripts, license position, assistant guardrails, toolkit)
 ```
 
 ## What I would do in production
@@ -236,4 +330,5 @@ tests/        pytest suite (generator, staging definitions, scripts, license pos
 - Personal developer instance (PDI); it is reclaimed after inactivity, so configuration is kept in this repository.
 - License metrics and prices in the test data are simplified and fictitious; the license position counts installations, not actual use.
 - The standalone Claude API loop in `assistant.py` has not been run; the questions were answered from Claude Code through the same read-only tools.
+- The ITAM Toolkit demo changed Muster AG data (three leaver devices returned or lost, two CI statuses changed and fixed); see [`docs/limitations.md`](docs/limitations.md).
 - All names, serial numbers and addresses are invented. The e-mail domain `muster.example` uses the reserved `.example` TLD.
