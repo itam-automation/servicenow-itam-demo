@@ -13,3 +13,6 @@ __pycache__/
 # macOS / iCloud
 .DS_Store
 *.icloud
+
+# Laufergebnisse des Loaders
+loader/output/

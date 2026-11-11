@@ -1,0 +1,583 @@
+device_source_id,installed_on,publisher,display_name,version,install_date
+INV-00001,NBZH0001,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-09-27
+INV-00001,NBZH0001,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2026-10-09
+INV-00001,NBZH0001,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2026-09-25
+INV-00001,NBZH0001,win.rar GmbH,WinRAR (64-bit),6.24,2026-10-18
+INV-00001,NBZH0001,Google,Google Chrome,131.0.6778.86,2026-10-18
+INV-00001,NBZH0001,Igor Pavlov,7-Zip (x64),24.08,2026-10-28
+INV-00001,NBZH0001,Notepad++ Team,Notepad++ (64-bit x64),8.7,2026-10-14
+INV-00001,NBZH0001,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-11-10
+INV-00002,NBBE0001,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-03-23
+INV-00002,NBBE0001,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2023-08-15
+INV-00002,NBBE0001,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-10-23
+INV-00002,NBBE0001,Adobe,Adobe Photoshop 2025,26.1.0,2023-08-12
+INV-00002,NBBE0001,TechSmith,Snagit 2024,24.2.0,2026-02-10
+INV-00002,NBBE0001,Google,Google Chrome,130.0.6723.117,2026-01-08
+INV-00002,NBBE0001,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-02-10
+INV-00003,NBZH0002,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-04-23
+INV-00003,NBZH0002,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2022-11-24
+INV-00003,NBZH0002,Google,Google Chrome,131.0.6778.86,2024-02-21
+INV-00003,NBZH0002,Igor Pavlov,7-Zip (x64),24.08,2025-12-31
+INV-00003,NBZH0002,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2024-11-21
+INV-00004,NBZH0003,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2023-10-16
+INV-00004,NBZH0003,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2025-03-10
+INV-00004,NBZH0003,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-10-27
+INV-00004,NBZH0003,SAP SE,SAP GUI for Windows 8.00,8.00,2026-01-14
+INV-00006,NBBS0001,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-03-28
+INV-00006,NBBS0001,Microsoft,Microsoft Visio - de-de,16.0.18129.20116,2025-12-17
+INV-00006,NBBS0001,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-10-24
+INV-00006,NBBS0001,Google,Google Chrome,131.0.6778.86,2025-11-14
+INV-00006,NBBS0001,Mozilla,Mozilla Firefox (x64 de),132.0.2,2026-08-03
+INV-00006,NBBS0001,Igor Pavlov,7-Zip (x64),23.01,2026-03-06
+INV-00006,NBBS0001,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-11-04
+INV-00009,NBBE0002,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2023-02-24
+INV-00009,NBBE0002,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2025-12-22
+INV-00009,NBBE0002,Google,Google Chrome,131.0.6778.86,2023-05-24
+INV-00010,NBLU0001,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-09-12
+INV-00010,NBLU0001,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-05-31
+INV-00010,NBLU0001,Google,Google Chrome,130.0.6723.117,2026-10-16
+INV-00010,NBLU0001,KeePassXC Team,KeePassXC,2.7.9,2025-01-04
+INV-00012,NBZH0008,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-08-30
+INV-00012,NBZH0008,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2026-07-08
+INV-00012,NBZH0008,Microsoft,Microsoft Visual Studio Code,1.95.2,2026-10-19
+INV-00012,NBZH0008,Microsoft,SQL Server Management Studio,20.2.30.0,2026-10-21
+INV-00012,NBZH0008,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-04-20
+INV-00012,NBZH0008,Google,Google Chrome,131.0.6778.86,2026-05-17
+INV-00012,NBZH0008,Igor Pavlov,7-Zip (x64),23.01,2026-05-01
+INV-00012,NBZH0008,Notepad++ Team,Notepad++ (64-bit x64),8.7,2026-02-20
+INV-00012,NBZH0008,The Git Development Community,Git,2.47.0,2026-01-31
+INV-00013,NBLU0002,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-03-26
+INV-00013,NBLU0002,Microsoft,Microsoft Visio - de-de,16.0.18129.20116,2026-09-19
+INV-00013,NBLU0002,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2025-05-29
+INV-00013,NBLU0002,Google,Google Chrome,131.0.6778.86,2023-01-27
+INV-00013,NBLU0002,Igor Pavlov,7-Zip (x64),24.08,2026-10-29
+INV-00014,NBZH0009,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-09-09
+INV-00014,NBZH0009,Microsoft,Microsoft Visual Studio Code,1.95.2,2026-09-25
+INV-00014,NBZH0009,Google,Google Chrome,130.0.6723.117,2026-08-24
+INV-00014,NBZH0009,Mozilla,Mozilla Firefox (x64 de),132.0.2,2026-11-02
+INV-00014,NBZH0009,Python Software Foundation,Python 3.12 (64-bit),3.12.7,2026-09-22
+INV-00014,NBZH0009,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-08-20
+INV-00015,NBWI0001,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2021-07-24
+INV-00015,NBWI0001,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2024-10-04
+INV-00015,NBWI0001,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2022-03-02
+INV-00015,NBWI0001,Google,Google Chrome,130.0.6723.117,2022-05-02
+INV-00015,NBWI0001,Igor Pavlov,7-Zip (x64),23.01,2026-08-09
+INV-00017,NBBE0003,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-03-13
+INV-00017,NBBE0003,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2026-10-10
+INV-00017,NBBE0003,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-08-28
+INV-00017,NBBE0003,Adobe,Adobe Photoshop 2025,26.1.0,2022-12-22
+INV-00017,NBBE0003,TechSmith,Snagit 2024,24.2.0,2026-11-10
+INV-00017,NBBE0003,Google,Google Chrome,130.0.6723.117,2023-10-20
+INV-00017,NBBE0003,Igor Pavlov,7-Zip (x64),24.08,2024-05-04
+INV-00017,NBBE0003,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-05-03
+INV-00019,NBBS0002,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2024-02-01
+INV-00019,NBBS0002,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-08-17
+INV-00019,NBBS0002,Google,Google Chrome,130.0.6723.117,2023-09-19
+INV-00019,NBBS0002,Igor Pavlov,7-Zip (x64),23.01,2026-01-05
+INV-00020,NBWI0002,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-08-03
+INV-00020,NBWI0002,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2023-03-17
+INV-00020,NBWI0002,TechSmith,Snagit 2024,24.2.0,2022-02-17
+INV-00020,NBWI0002,Google,Google Chrome,131.0.6778.86,2021-07-17
+INV-00020,NBWI0002,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2024-01-07
+INV-00024,NBZH0015,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-05-14
+INV-00024,NBZH0015,Microsoft,Microsoft Visio - de-de,16.0.18129.20116,2022-07-29
+INV-00024,NBZH0015,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2022-07-04
+INV-00024,NBZH0015,Microsoft,Microsoft Visual Studio Code,1.95.2,2026-01-15
+INV-00024,NBZH0015,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2022-07-29
+INV-00024,NBZH0015,JetBrains,PyCharm 2024.3,2024.3,2024-11-07
+INV-00024,NBZH0015,Google,Google Chrome,130.0.6723.117,2022-10-27
+INV-00024,NBZH0015,Igor Pavlov,7-Zip (x64),24.08,2022-09-05
+INV-00024,NBZH0015,Notepad++ Team,Notepad++ (64-bit x64),8.7,2023-12-10
+INV-00024,NBZH0015,Python Software Foundation,Python 3.12 (64-bit),3.12.7,2026-03-12
+INV-00024,NBZH0015,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-03-29
+INV-00024,NBZH0015,KeePassXC Team,KeePassXC,2.7.9,2022-11-29
+INV-00025,NBBE0004,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-10-08
+INV-00025,NBBE0004,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-08-24
+INV-00025,NBBE0004,Google,Google Chrome,130.0.6723.117,2026-11-06
+INV-00025,NBBE0004,Igor Pavlov,7-Zip (x64),23.01,2026-08-11
+INV-00025,NBBE0004,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-09-29
+INV-00026,NBWI0003,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2020-06-22
+INV-00026,NBWI0003,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2023-10-19
+INV-00026,NBWI0003,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2024-03-05
+INV-00026,NBWI0003,Google,Google Chrome,131.0.6778.86,2025-09-01
+INV-00026,NBWI0003,Igor Pavlov,7-Zip (x64),24.08,2022-02-02
+INV-00026,NBWI0003,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2020-12-22
+INV-00026,NBWI0003,SAP SE,SAP GUI for Windows 8.00,8.00,2026-09-07
+INV-00027,NBZH0016,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2023-07-30
+INV-00027,NBZH0016,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2024-04-23
+INV-00027,NBZH0016,Google,Google Chrome,131.0.6778.86,2026-05-13
+INV-00027,NBZH0016,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2023-08-15
+INV-00027,NBZH0016,SAP SE,SAP GUI for Windows 8.00,8.00,2023-01-14
+INV-00029,NBBS0003,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2024-06-11
+INV-00029,NBBS0003,Microsoft,Microsoft Visual Studio Code,1.95.2,2026-08-19
+INV-00029,NBBS0003,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-08-21
+INV-00029,NBBS0003,Google,Google Chrome,130.0.6723.117,2026-10-27
+INV-00029,NBBS0003,Python Software Foundation,Python 3.12 (64-bit),3.12.7,2026-07-02
+INV-00029,NBBS0003,The Git Development Community,Git,2.47.0,2023-12-13
+INV-00029,NBBS0003,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2024-05-31
+INV-00029,NBBS0003,KeePassXC Team,KeePassXC,2.7.9,2024-07-03
+INV-00030,NBZH0018,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-12-23
+INV-00030,NBZH0018,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-02-10
+INV-00030,NBZH0018,Autodesk,AutoCAD LT 2025 - Deutsch (German),25.0.58.0,2025-12-19
+INV-00030,NBZH0018,Google,Google Chrome,131.0.6778.86,2026-04-29
+INV-00030,NBZH0018,Mozilla,Mozilla Firefox (x64 de),132.0.2,2026-10-01
+INV-00030,NBZH0018,Igor Pavlov,7-Zip (x64),23.01,2026-05-20
+INV-00030,NBZH0018,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-01-06
+INV-00031,NBBS0004,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-08-17
+INV-00031,NBBS0004,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2026-04-05
+INV-00031,NBBS0004,win.rar GmbH,WinRAR (64-bit),7.01,2026-10-05
+INV-00031,NBBS0004,Google,Google Chrome,131.0.6778.86,2026-04-10
+INV-00031,NBBS0004,Igor Pavlov,7-Zip (x64),24.08,2025-12-22
+INV-00033,NBZH0020,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-07-14
+INV-00033,NBZH0020,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2026-08-27
+INV-00033,NBZH0020,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2026-10-24
+INV-00033,NBZH0020,Google,Google Chrome,130.0.6723.117,2026-09-01
+INV-00034,NBZH0021,Microsoft,Microsoft Visio - de-de,16.0.18129.20116,2023-01-19
+INV-00034,NBZH0021,Microsoft,Microsoft Visual Studio Code,1.95.2,2025-01-23
+INV-00034,NBZH0021,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2026-01-11
+INV-00034,NBZH0021,Google,Google Chrome,131.0.6778.86,2022-11-14
+INV-00034,NBZH0021,Mozilla,Mozilla Firefox (x64 de),132.0.2,2022-04-10
+INV-00034,NBZH0021,Igor Pavlov,7-Zip (x64),24.08,2023-09-20
+INV-00034,NBZH0021,Notepad++ Team,Notepad++ (64-bit x64),8.7,2022-05-23
+INV-00034,NBZH0021,Python Software Foundation,Python 3.12 (64-bit),3.12.7,2026-11-10
+INV-00034,NBZH0021,The Git Development Community,Git,2.47.0,2026-02-16
+INV-00034,NBZH0021,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2024-06-03
+INV-00034,NBZH0021,KeePassXC Team,KeePassXC,2.7.9,2022-12-24
+INV-00035,NBBS0005,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-09-15
+INV-00035,NBBS0005,Microsoft,Microsoft Visual Studio Code,1.95.2,2026-10-20
+INV-00035,NBBS0005,Google,Google Chrome,130.0.6723.117,2026-09-14
+INV-00035,NBBS0005,Mozilla,Mozilla Firefox (x64 de),132.0.2,2026-07-01
+INV-00035,NBBS0005,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-07-08
+INV-00035,NBBS0005,KeePassXC Team,KeePassXC,2.7.9,2026-09-20
+INV-00036,NBBS0006,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-05-10
+INV-00036,NBBS0006,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2024-04-09
+INV-00036,NBBS0006,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2024-01-30
+INV-00036,NBBS0006,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2023-12-21
+INV-00036,NBBS0006,Mozilla,Mozilla Firefox (x64 de),132.0.2,2026-10-26
+INV-00036,NBBS0006,SAP SE,SAP GUI for Windows 8.00,8.00,2026-01-27
+INV-00039,NBZH0024,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2024-05-23
+INV-00039,NBZH0024,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2026-07-01
+INV-00039,NBZH0024,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2022-08-03
+INV-00039,NBZH0024,Google,Google Chrome,130.0.6723.117,2026-06-30
+INV-00039,NBZH0024,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2023-10-11
+INV-00039,NBZH0024,SAP SE,SAP GUI for Windows 8.00,8.00,2026-03-27
+INV-00042,NBZH0027,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-05-15
+INV-00042,NBZH0027,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2025-08-22
+INV-00042,NBZH0027,Google,Google Chrome,131.0.6778.86,2024-10-27
+INV-00042,NBZH0027,Igor Pavlov,7-Zip (x64),23.01,2026-06-29
+INV-00042,NBZH0027,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-01-02
+INV-00044,NBBS0007,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-03-01
+INV-00044,NBBS0007,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2026-02-04
+INV-00044,NBBS0007,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2024-10-13
+INV-00044,NBBS0007,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-08-22
+INV-00044,NBBS0007,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-10-12
+INV-00046,NBBE0005,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2022-07-25
+INV-00046,NBBE0005,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2024-11-10
+INV-00046,NBBE0005,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2024-05-21
+INV-00046,NBBE0005,Google,Google Chrome,131.0.6778.86,2024-05-26
+INV-00047,NBBS0008,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-04-10
+INV-00047,NBBS0008,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2025-08-17
+INV-00047,NBBS0008,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-10-16
+INV-00047,NBBS0008,Google,Google Chrome,130.0.6723.117,2025-06-27
+INV-00047,NBBS0008,Mozilla,Mozilla Firefox (x64 de),132.0.2,2026-04-03
+INV-00047,NBBS0008,Igor Pavlov,7-Zip (x64),23.01,2026-05-14
+INV-00047,NBBS0008,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-01-05
+INV-00048,NBZH0030,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-07-17
+INV-00048,NBZH0030,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2023-11-11
+INV-00048,NBZH0030,Google,Google Chrome,131.0.6778.86,2024-11-17
+INV-00048,NBZH0030,Igor Pavlov,7-Zip (x64),23.01,2025-07-31
+INV-00050,NBZH0032,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2024-07-24
+INV-00050,NBZH0032,TechSmith,Snagit 2024,24.2.0,2026-06-11
+INV-00050,NBZH0032,Google,Google Chrome,130.0.6723.117,2022-04-19
+INV-00050,NBZH0032,Igor Pavlov,7-Zip (x64),24.08,2024-04-12
+INV-00050,NBZH0032,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2024-05-08
+INV-00051,NBWI0004,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2023-11-30
+INV-00051,NBWI0004,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-02-21
+INV-00051,NBWI0004,Google,Google Chrome,131.0.6778.86,2025-07-09
+INV-00051,NBWI0004,Igor Pavlov,7-Zip (x64),23.01,2026-01-18
+INV-00051,NBWI0004,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-08-16
+INV-00051,NBWI0004,SAP SE,SAP GUI for Windows 8.00,8.00,2024-12-16
+INV-00055,NBLU0003,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-07-30
+INV-00055,NBLU0003,Autodesk,AutoCAD LT 2025 - Deutsch (German),25.0.58.0,2025-04-29
+INV-00055,NBLU0003,Google,Google Chrome,130.0.6723.117,2026-10-31
+INV-00055,NBLU0003,Igor Pavlov,7-Zip (x64),23.01,2026-07-30
+INV-00055,NBLU0003,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-03-31
+INV-00055,NBLU0003,KeePassXC Team,KeePassXC,2.7.9,2025-06-24
+INV-00057,NBZH0037,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-10-13
+INV-00057,NBZH0037,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-04-02
+INV-00057,NBZH0037,Google,Google Chrome,130.0.6723.117,2026-10-15
+INV-00057,NBZH0037,Igor Pavlov,7-Zip (x64),24.08,2025-07-09
+INV-00057,NBZH0037,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-10-03
+INV-00059,NBLU0004,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2024-08-14
+INV-00059,NBLU0004,Microsoft,Microsoft Visio - de-de,16.0.18129.20116,2024-03-09
+INV-00059,NBLU0004,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2025-04-29
+INV-00059,NBLU0004,Microsoft,Microsoft Visual Studio Code,1.95.2,2024-06-11
+INV-00059,NBLU0004,Microsoft,SQL Server Management Studio,20.2.30.0,2026-09-01
+INV-00059,NBLU0004,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2023-12-12
+INV-00059,NBLU0004,JetBrains,PyCharm 2024.3,2024.3,2025-09-07
+INV-00059,NBLU0004,Google,Google Chrome,130.0.6723.117,2024-05-23
+INV-00059,NBLU0004,Notepad++ Team,Notepad++ (64-bit x64),8.7,2026-05-03
+INV-00059,NBLU0004,The Git Development Community,Git,2.47.0,2024-01-12
+INV-00059,NBLU0004,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-05-24
+INV-00059,NBLU0004,KeePassXC Team,KeePassXC,2.7.9,2024-01-14
+INV-00060,NBBE0006,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-04-04
+INV-00060,NBBE0006,Adobe,Adobe Photoshop 2025,26.1.0,2026-01-11
+INV-00060,NBBE0006,TechSmith,Snagit 2024,24.2.0,2026-09-10
+INV-00060,NBBE0006,Google,Google Chrome,131.0.6778.86,2025-04-25
+INV-00060,NBBE0006,Igor Pavlov,7-Zip (x64),23.01,2025-05-02
+INV-00060,NBBE0006,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-04-24
+INV-00061,NBZH0039,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2024-07-06
+INV-00061,NBZH0039,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2023-09-11
+INV-00061,NBZH0039,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-02-01
+INV-00061,NBZH0039,Google,Google Chrome,130.0.6723.117,2024-06-20
+INV-00061,NBZH0039,Igor Pavlov,7-Zip (x64),23.01,2024-01-01
+INV-00061,NBZH0039,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-02-09
+INV-00061,NBZH0039,SAP SE,SAP GUI for Windows 8.00,8.00,2024-11-24
+INV-00062,NBZH0040,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-04-12
+INV-00062,NBZH0040,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-05-07
+INV-00062,NBZH0040,Google,Google Chrome,130.0.6723.117,2026-11-06
+INV-00062,NBZH0040,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-09-18
+INV-00063,NBWI0005,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-10-21
+INV-00063,NBWI0005,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2026-10-09
+INV-00063,NBWI0005,Google,Google Chrome,130.0.6723.117,2023-09-16
+INV-00063,NBWI0005,Igor Pavlov,7-Zip (x64),23.01,2026-02-21
+INV-00063,NBWI0005,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-11-12
+INV-00068,NBZH0045,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-08-14
+INV-00068,NBZH0045,Google,Google Chrome,131.0.6778.86,2025-04-19
+INV-00068,NBZH0045,Igor Pavlov,7-Zip (x64),23.01,2024-07-25
+INV-00068,NBZH0045,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-01-03
+INV-00070,NBBS0009,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2023-11-28
+INV-00070,NBBS0009,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2023-06-25
+INV-00070,NBBS0009,Google,Google Chrome,130.0.6723.117,2025-07-05
+INV-00070,NBBS0009,Igor Pavlov,7-Zip (x64),23.01,2024-06-27
+INV-00072,NBZH0048,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-04-19
+INV-00072,NBZH0048,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2023-07-15
+INV-00072,NBZH0048,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-04-15
+INV-00072,NBZH0048,Igor Pavlov,7-Zip (x64),24.08,2023-08-06
+INV-00072,NBZH0048,SAP SE,SAP GUI for Windows 8.00,8.00,2023-03-25
+INV-00072,NBZH0048,KeePassXC Team,KeePassXC,2.7.9,2025-10-17
+INV-00073,NBZH0049,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2024-09-12
+INV-00073,NBZH0049,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2024-07-21
+INV-00073,NBZH0049,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2022-10-07
+INV-00073,NBZH0049,Google,Google Chrome,131.0.6778.86,2026-04-03
+INV-00073,NBZH0049,Igor Pavlov,7-Zip (x64),24.08,2026-11-08
+INV-00073,NBZH0049,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2024-07-10
+INV-00073,NBZH0049,SAP SE,SAP GUI for Windows 8.00,8.00,2022-11-07
+INV-00074,NBBE0007,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-08-04
+INV-00074,NBBE0007,Microsoft,Microsoft Visual Studio Code,1.95.2,2026-05-30
+INV-00074,NBBE0007,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2025-10-31
+INV-00074,NBBE0007,win.rar GmbH,WinRAR (64-bit),7.01,2025-10-30
+INV-00074,NBBE0007,Google,Google Chrome,130.0.6723.117,2026-10-31
+INV-00074,NBBE0007,Igor Pavlov,7-Zip (x64),24.08,2026-01-28
+INV-00074,NBBE0007,Notepad++ Team,Notepad++ (64-bit x64),8.7,2025-12-15
+INV-00074,NBBE0007,Python Software Foundation,Python 3.12 (64-bit),3.12.7,2026-03-08
+INV-00074,NBBE0007,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-08-06
+INV-00075,NBZH0050,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-09-02
+INV-00075,NBZH0050,win.rar GmbH,WinRAR (64-bit),7.01,2026-06-02
+INV-00075,NBZH0050,Igor Pavlov,7-Zip (x64),23.01,2025-03-09
+INV-00075,NBZH0050,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-04-08
+INV-00076,NBLU0005,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-08-03
+INV-00076,NBLU0005,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2026-10-04
+INV-00076,NBLU0005,TechSmith,Snagit 2024,24.2.0,2026-10-05
+INV-00076,NBLU0005,win.rar GmbH,WinRAR (64-bit),7.01,2026-10-16
+INV-00076,NBLU0005,Google,Google Chrome,131.0.6778.86,2026-09-05
+INV-00076,NBLU0005,Igor Pavlov,7-Zip (x64),23.01,2026-09-19
+INV-00076,NBLU0005,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-08-21
+INV-00077,NBLU0006,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2023-10-03
+INV-00077,NBLU0006,Google,Google Chrome,131.0.6778.86,2025-02-22
+INV-00077,NBLU0006,Igor Pavlov,7-Zip (x64),24.08,2023-12-30
+INV-00077,NBLU0006,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-07-19
+INV-00077,NBLU0006,SAP SE,SAP GUI for Windows 8.00,8.00,2025-05-13
+INV-00078,NBWI0006,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2023-01-24
+INV-00078,NBWI0006,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2024-07-15
+INV-00078,NBWI0006,Autodesk,AutoCAD LT 2025 - Deutsch (German),25.0.58.0,2022-04-18
+INV-00078,NBWI0006,Google,Google Chrome,131.0.6778.86,2023-03-01
+INV-00078,NBWI0006,Igor Pavlov,7-Zip (x64),23.01,2023-06-12
+INV-00078,NBWI0006,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2022-12-05
+INV-00080,NBZH0052,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2023-07-08
+INV-00080,NBZH0052,Microsoft,Microsoft Visual Studio Code,1.95.2,2025-07-01
+INV-00080,NBZH0052,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-09-16
+INV-00080,NBZH0052,JetBrains,PyCharm 2024.3,2024.3,2023-08-15
+INV-00080,NBZH0052,Google,Google Chrome,130.0.6723.117,2026-05-17
+INV-00080,NBZH0052,Python Software Foundation,Python 3.12 (64-bit),3.12.7,2023-03-30
+INV-00080,NBZH0052,The Git Development Community,Git,2.47.0,2026-05-01
+INV-00080,NBZH0052,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-11-20
+INV-00081,NBWI0007,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2023-02-01
+INV-00081,NBWI0007,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2026-08-07
+INV-00081,NBWI0007,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-05-11
+INV-00081,NBWI0007,Google,Google Chrome,131.0.6778.86,2024-08-29
+INV-00081,NBWI0007,Igor Pavlov,7-Zip (x64),24.08,2023-03-02
+INV-00081,NBWI0007,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-10-22
+INV-00082,NBBS0010,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-05-19
+INV-00082,NBBS0010,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-04-30
+INV-00082,NBBS0010,Igor Pavlov,7-Zip (x64),24.08,2026-01-25
+INV-00082,NBBS0010,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-06-26
+INV-00082,NBBS0010,SAP SE,SAP GUI for Windows 8.00,8.00,2026-02-27
+INV-00083,NBZH0053,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-04-21
+INV-00083,NBZH0053,Autodesk,AutoCAD LT 2025 - Deutsch (German),25.0.58.0,2025-05-30
+INV-00083,NBZH0053,Google,Google Chrome,131.0.6778.86,2025-06-25
+INV-00083,NBZH0053,Notepad++ Team,Notepad++ (64-bit x64),8.7,2023-01-28
+INV-00083,NBZH0053,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2023-07-20
+INV-00084,NBBS0011,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-09-04
+INV-00084,NBBS0011,Microsoft,Microsoft Visio - de-de,16.0.18129.20116,2025-10-24
+INV-00084,NBBS0011,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2023-09-24
+INV-00084,NBBS0011,Autodesk,AutoCAD LT 2025 - Deutsch (German),25.0.58.0,2025-07-18
+INV-00084,NBBS0011,Google,Google Chrome,131.0.6778.86,2023-12-26
+INV-00084,NBBS0011,Igor Pavlov,7-Zip (x64),24.08,2025-10-18
+INV-00084,NBBS0011,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-09-24
+INV-00086,NBBE0008,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-05-30
+INV-00086,NBBE0008,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2024-05-09
+INV-00086,NBBE0008,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2023-10-15
+INV-00086,NBBE0008,Google,Google Chrome,130.0.6723.117,2025-01-02
+INV-00086,NBBE0008,Igor Pavlov,7-Zip (x64),23.01,2024-01-02
+INV-00086,NBBE0008,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-03-21
+INV-00087,NBLU0007,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-06-20
+INV-00087,NBLU0007,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2024-12-31
+INV-00087,NBLU0007,Google,Google Chrome,131.0.6778.86,2025-09-27
+INV-00087,NBLU0007,Igor Pavlov,7-Zip (x64),23.01,2026-03-22
+INV-00087,NBLU0007,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-06-21
+INV-00088,NBZH0055,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-06-27
+INV-00088,NBZH0055,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2026-01-09
+INV-00088,NBZH0055,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2026-08-27
+INV-00088,NBZH0055,Google,Google Chrome,131.0.6778.86,2025-05-21
+INV-00089,NBLU0008,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-04-01
+INV-00089,NBLU0008,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2025-03-10
+INV-00089,NBLU0008,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2024-12-10
+INV-00089,NBLU0008,Adobe,Adobe Photoshop 2025,26.1.0,2022-11-04
+INV-00089,NBLU0008,Google,Google Chrome,130.0.6723.117,2025-07-27
+INV-00089,NBLU0008,Igor Pavlov,7-Zip (x64),24.08,2025-08-21
+INV-00089,NBLU0008,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2023-02-03
+INV-00090,NBWI0008,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-10-20
+INV-00090,NBWI0008,JetBrains,PyCharm 2024.3,2024.3,2026-10-27
+INV-00090,NBWI0008,Google,Google Chrome,130.0.6723.117,2026-10-31
+INV-00090,NBWI0008,Mozilla,Mozilla Firefox (x64 de),132.0.2,2026-09-18
+INV-00090,NBWI0008,The Git Development Community,Git,2.47.0,2026-11-09
+INV-00090,NBWI0008,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-11-11
+INV-00090,NBWI0008,KeePassXC Team,KeePassXC,2.7.9,2026-10-10
+INV-00091,NBZH0056,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-01-17
+INV-00091,NBZH0056,Google,Google Chrome,131.0.6778.86,2026-08-24
+INV-00091,NBZH0056,Igor Pavlov,7-Zip (x64),24.08,2024-12-30
+INV-00091,NBZH0056,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-10-21
+INV-00091,NBZH0056,SAP SE,SAP GUI for Windows 8.00,8.00,2025-11-18
+INV-00092,NBWI0009,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-05-18
+INV-00092,NBWI0009,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2024-01-18
+INV-00092,NBWI0009,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2026-06-19
+INV-00092,NBWI0009,Google,Google Chrome,131.0.6778.86,2025-11-25
+INV-00092,NBWI0009,Igor Pavlov,7-Zip (x64),23.01,2025-04-26
+INV-00092,NBWI0009,SAP SE,SAP GUI for Windows 8.00,8.00,2024-01-03
+INV-00093,NBZH0057,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-08-12
+INV-00093,NBZH0057,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-07-19
+INV-00093,NBZH0057,Google,Google Chrome,131.0.6778.86,2025-01-22
+INV-00093,NBZH0057,Igor Pavlov,7-Zip (x64),23.01,2025-10-07
+INV-00093,NBZH0057,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2024-12-04
+INV-00097,NBBE0009,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-01-12
+INV-00097,NBBE0009,Google,Google Chrome,131.0.6778.86,2026-03-20
+INV-00097,NBBE0009,Igor Pavlov,7-Zip (x64),24.08,2026-06-04
+INV-00098,NBZH0061,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-03-10
+INV-00098,NBZH0061,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2025-05-13
+INV-00098,NBZH0061,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2024-11-10
+INV-00098,NBZH0061,Google,Google Chrome,131.0.6778.86,2024-07-27
+INV-00098,NBZH0061,Igor Pavlov,7-Zip (x64),24.08,2025-07-09
+INV-00098,NBZH0061,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-06-29
+INV-00099,NBLU0009,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-10-22
+INV-00099,NBLU0009,Microsoft,Microsoft Visio - de-de,16.0.18129.20116,2026-02-05
+INV-00099,NBLU0009,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2026-03-22
+INV-00099,NBLU0009,Autodesk,AutoCAD LT 2025 - Deutsch (German),25.0.58.0,2026-10-08
+INV-00099,NBLU0009,Google,Google Chrome,130.0.6723.117,2025-11-03
+INV-00099,NBLU0009,Igor Pavlov,7-Zip (x64),24.08,2026-08-14
+INV-00101,NBZH0063,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-12-31
+INV-00101,NBZH0063,TechSmith,Snagit 2024,24.2.0,2026-08-11
+INV-00101,NBZH0063,Google,Google Chrome,131.0.6778.86,2024-07-11
+INV-00101,NBZH0063,Mozilla,Mozilla Firefox (x64 de),132.0.2,2024-07-31
+INV-00105,NBZH0067,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-08-30
+INV-00105,NBZH0067,Google,Google Chrome,130.0.6723.117,2026-03-31
+INV-00105,NBZH0067,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-11-17
+INV-00107,NBBE0010,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2022-06-24
+INV-00107,NBBE0010,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2024-11-04
+INV-00107,NBBE0010,win.rar GmbH,WinRAR (64-bit),7.01,2023-04-16
+INV-00107,NBBE0010,Google,Google Chrome,131.0.6778.86,2025-06-08
+INV-00107,NBBE0010,Igor Pavlov,7-Zip (x64),23.01,2025-03-24
+INV-00107,NBBE0010,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-01-27
+INV-00109,NBBE0011,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-04-01
+INV-00109,NBBE0011,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2026-08-01
+INV-00109,NBBE0011,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2024-01-26
+INV-00109,NBBE0011,Adobe,Adobe Photoshop 2025,26.1.0,2026-07-30
+INV-00109,NBBE0011,Google,Google Chrome,130.0.6723.117,2024-04-23
+INV-00109,NBBE0011,Igor Pavlov,7-Zip (x64),23.01,2024-06-07
+INV-00109,NBBE0011,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-04-10
+INV-00110,NBBS0012,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2023-08-09
+INV-00110,NBBS0012,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2024-10-04
+INV-00110,NBBS0012,Google,Google Chrome,131.0.6778.86,2024-09-04
+INV-00110,NBBS0012,Igor Pavlov,7-Zip (x64),23.01,2026-04-01
+INV-00111,PCBE0001,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-06-10
+INV-00111,PCBE0001,Google,Google Chrome,130.0.6723.117,2026-09-06
+INV-00111,PCBE0001,Igor Pavlov,7-Zip (x64),23.01,2025-05-05
+INV-00111,PCBE0001,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-03-18
+INV-00112,PCZH0001,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-09-03
+INV-00112,PCZH0001,Microsoft,Microsoft PowerBI Desktop (x64),2.137.952.0,2024-09-21
+INV-00112,PCZH0001,Microsoft,Microsoft Visual Studio Code,1.95.2,2025-06-23
+INV-00112,PCZH0001,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2025-07-21
+INV-00112,PCZH0001,JetBrains,PyCharm 2024.3,2024.3,2026-06-26
+INV-00112,PCZH0001,Google,Google Chrome,130.0.6723.117,2025-09-14
+INV-00112,PCZH0001,Mozilla,Mozilla Firefox (x64 de),132.0.2,2026-06-08
+INV-00112,PCZH0001,Igor Pavlov,7-Zip (x64),24.08,2026-06-10
+INV-00112,PCZH0001,Python Software Foundation,Python 3.12 (64-bit),3.12.7,2025-06-12
+INV-00112,PCZH0001,The Git Development Community,Git,2.47.0,2026-07-14
+INV-00112,PCZH0001,KeePassXC Team,KeePassXC,2.7.9,2024-11-03
+INV-00113,PCBE0002,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2023-08-31
+INV-00113,PCBE0002,Microsoft,Microsoft Visio - de-de,16.0.18129.20116,2026-07-01
+INV-00113,PCBE0002,Microsoft,Microsoft Visual Studio Code,1.95.2,2026-03-28
+INV-00113,PCBE0002,Microsoft,SQL Server Management Studio,20.2.30.0,2023-01-29
+INV-00113,PCBE0002,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2024-12-17
+INV-00113,PCBE0002,Google,Google Chrome,131.0.6778.86,2025-11-16
+INV-00113,PCBE0002,Mozilla,Mozilla Firefox (x64 de),132.0.2,2025-10-15
+INV-00113,PCBE0002,Notepad++ Team,Notepad++ (64-bit x64),8.7,2022-08-22
+INV-00113,PCBE0002,Python Software Foundation,Python 3.12 (64-bit),3.12.7,2024-12-04
+INV-00113,PCBE0002,KeePassXC Team,KeePassXC,2.7.9,2022-10-20
+INV-00114,PCZH0002,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-07-15
+INV-00114,PCZH0002,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2025-06-05
+INV-00114,PCZH0002,Google,Google Chrome,131.0.6778.86,2026-03-04
+INV-00114,PCZH0002,Igor Pavlov,7-Zip (x64),24.08,2024-09-25
+INV-00114,PCZH0002,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-04-14
+INV-00114,PCZH0002,SAP SE,SAP GUI for Windows 8.00,8.00,2025-11-05
+INV-00117,PCBS0001,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-11-27
+INV-00117,PCBS0001,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2022-03-02
+INV-00117,PCBS0001,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2024-11-02
+INV-00117,PCBS0001,Adobe,Adobe Photoshop 2025,26.1.0,2026-09-24
+INV-00117,PCBS0001,TechSmith,Snagit 2024,24.2.0,2024-07-25
+INV-00117,PCBS0001,win.rar GmbH,WinRAR (64-bit),7.01,2023-06-12
+INV-00117,PCBS0001,Google,Google Chrome,130.0.6723.117,2026-01-31
+INV-00117,PCBS0001,Igor Pavlov,7-Zip (x64),23.01,2023-05-03
+INV-00117,PCBS0001,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2023-05-08
+INV-00119,PCLU0001,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-11-09
+INV-00119,PCLU0001,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-09-24
+INV-00119,PCLU0001,Google,Google Chrome,130.0.6723.117,2025-10-06
+INV-00119,PCLU0001,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-11-12
+INV-00120,PCLU0002,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-03-01
+INV-00120,PCLU0002,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2024-10-15
+INV-00120,PCLU0002,Autodesk,AutoCAD LT 2025 - Deutsch (German),25.0.58.0,2023-07-21
+INV-00120,PCLU0002,Google,Google Chrome,131.0.6778.86,2025-01-07
+INV-00123,PCZH0008,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2020-12-20
+INV-00123,PCZH0008,Microsoft,Microsoft Visio - de-de,16.0.18129.20116,2021-11-11
+INV-00123,PCZH0008,Microsoft,Microsoft Visual Studio Code,1.95.2,2026-06-18
+INV-00123,PCZH0008,Microsoft,SQL Server Management Studio,20.2.30.0,2024-09-20
+INV-00123,PCZH0008,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2023-07-15
+INV-00123,PCZH0008,Google,Google Chrome,131.0.6778.86,2022-04-27
+INV-00123,PCZH0008,Igor Pavlov,7-Zip (x64),24.08,2023-11-22
+INV-00123,PCZH0008,The Git Development Community,Git,2.47.0,2023-05-27
+INV-00123,PCZH0008,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2024-05-23
+INV-00124,PCLU0003,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2023-07-19
+INV-00124,PCLU0003,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2023-09-14
+INV-00124,PCLU0003,Google,Google Chrome,131.0.6778.86,2025-11-12
+INV-00124,PCLU0003,Igor Pavlov,7-Zip (x64),23.01,2024-11-12
+INV-00125,PCWI0001,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2024-06-28
+INV-00125,PCWI0001,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2024-05-13
+INV-00125,PCWI0001,Google,Google Chrome,131.0.6778.86,2022-12-26
+INV-00125,PCWI0001,Mozilla,Mozilla Firefox (x64 de),132.0.2,2023-04-04
+INV-00125,PCWI0001,Igor Pavlov,7-Zip (x64),24.08,2022-12-18
+INV-00125,PCWI0001,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2024-01-03
+INV-00127,PCZH0010,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2024-01-10
+INV-00127,PCZH0010,Google,Google Chrome,130.0.6723.117,2026-06-08
+INV-00127,PCZH0010,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-03-26
+INV-00128,PCWI0002,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2026-07-01
+INV-00128,PCWI0002,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-02-07
+INV-00128,PCWI0002,Google,Google Chrome,131.0.6778.86,2026-08-18
+INV-00128,PCWI0002,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-09-23
+INV-00128,PCWI0002,SAP SE,SAP GUI for Windows 8.00,8.00,2026-03-23
+INV-00129,PCBE0003,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-08-12
+INV-00129,PCBE0003,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2026-02-07
+INV-00129,PCBE0003,Google,Google Chrome,130.0.6723.117,2026-10-30
+INV-00129,PCBE0003,Igor Pavlov,7-Zip (x64),23.01,2026-09-26
+INV-00129,PCBE0003,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-06-15
+INV-00130,PCBS0002,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2022-05-07
+INV-00130,PCBS0002,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2022-01-03
+INV-00130,PCBS0002,win.rar GmbH,WinRAR (64-bit),6.24,2023-06-22
+INV-00130,PCBS0002,Google,Google Chrome,131.0.6778.86,2026-03-07
+INV-00130,PCBS0002,Mozilla,Mozilla Firefox (x64 de),132.0.2,2024-02-27
+INV-00130,PCBS0002,Igor Pavlov,7-Zip (x64),23.01,2025-04-26
+INV-00130,PCBS0002,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2023-09-01
+INV-00132,PCBS0003,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2024-08-25
+INV-00132,PCBS0003,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2025-04-04
+INV-00132,PCBS0003,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-01-20
+INV-00132,PCBS0003,Google,Google Chrome,130.0.6723.117,2025-03-12
+INV-00132,PCBS0003,Igor Pavlov,7-Zip (x64),23.01,2025-05-10
+INV-00132,PCBS0003,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-07-20
+INV-00132,PCBS0003,SAP SE,SAP GUI for Windows 8.00,8.00,2026-09-11
+INV-00133,PCBS0004,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-01-30
+INV-00133,PCBS0004,Microsoft,Microsoft Visio - de-de,16.0.18129.20116,2026-09-15
+INV-00133,PCBS0004,Microsoft,Microsoft Visual Studio Code,1.95.2,2025-09-24
+INV-00133,PCBS0004,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-09-27
+INV-00133,PCBS0004,JetBrains,PyCharm 2024.3,2024.3,2025-10-22
+INV-00133,PCBS0004,win.rar GmbH,WinRAR (64-bit),6.24,2025-05-11
+INV-00133,PCBS0004,Google,Google Chrome,131.0.6778.86,2026-03-06
+INV-00133,PCBS0004,Mozilla,Mozilla Firefox (x64 de),132.0.2,2025-12-04
+INV-00133,PCBS0004,Igor Pavlov,7-Zip (x64),24.08,2025-09-24
+INV-00133,PCBS0004,Notepad++ Team,Notepad++ (64-bit x64),8.7,2025-12-03
+INV-00133,PCBS0004,Python Software Foundation,Python 3.12 (64-bit),3.12.7,2025-01-04
+INV-00133,PCBS0004,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-09-03
+INV-00134,PCLU0004,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-10-07
+INV-00134,PCLU0004,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2026-10-02
+INV-00134,PCLU0004,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-11-06
+INV-00134,PCLU0004,Adobe,Adobe Photoshop 2025,26.1.0,2026-10-18
+INV-00134,PCLU0004,TechSmith,Snagit 2024,24.2.0,2026-06-18
+INV-00134,PCLU0004,Google,Google Chrome,130.0.6723.117,2026-05-23
+INV-00134,PCLU0004,Igor Pavlov,7-Zip (x64),24.08,2026-07-06
+INV-00135,PCZH0012,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-05-20
+INV-00135,PCZH0012,Autodesk,AutoCAD LT 2025 - Deutsch (German),25.0.58.0,2026-11-07
+INV-00135,PCZH0012,Google,Google Chrome,130.0.6723.117,2025-03-08
+INV-00135,PCZH0012,Mozilla,Mozilla Firefox (x64 de),132.0.2,2026-06-20
+INV-00136,PCBS0005,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2024-08-06
+INV-00136,PCBS0005,Google,Google Chrome,130.0.6723.117,2024-09-21
+INV-00136,PCBS0005,Igor Pavlov,7-Zip (x64),24.08,2025-06-23
+INV-00136,PCBS0005,Notepad++ Team,Notepad++ (64-bit x64),8.7,2025-07-12
+INV-00136,PCBS0005,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2026-07-11
+INV-00136,PCBS0005,SAP SE,SAP GUI for Windows 8.00,8.00,2025-04-16
+INV-00137,PCZH0013,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2023-12-06
+INV-00137,PCZH0013,Microsoft,Microsoft Visio - de-de,16.0.18129.20116,2023-07-10
+INV-00137,PCZH0013,Microsoft,Microsoft Visual Studio Code,1.95.2,2024-10-09
+INV-00137,PCZH0013,Microsoft,SQL Server Management Studio,20.2.30.0,2025-04-18
+INV-00137,PCZH0013,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2023-10-18
+INV-00137,PCZH0013,Google,Google Chrome,130.0.6723.117,2023-07-29
+INV-00137,PCZH0013,Mozilla,Mozilla Firefox (x64 de),132.0.2,2024-02-07
+INV-00137,PCZH0013,Igor Pavlov,7-Zip (x64),24.08,2023-09-11
+INV-00137,PCZH0013,Notepad++ Team,Notepad++ (64-bit x64),8.7,2023-10-03
+INV-00137,PCZH0013,Python Software Foundation,Python 3.12 (64-bit),3.12.7,2026-07-10
+INV-00137,PCZH0013,The Git Development Community,Git,2.47.0,2025-08-21
+INV-00137,PCZH0013,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2024-09-10
+INV-00138,PCZH0014,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-07-02
+INV-00138,PCZH0014,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2025-11-22
+INV-00138,PCZH0014,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2023-12-15
+INV-00138,PCZH0014,Adobe,Adobe Photoshop 2025,26.1.0,2026-09-03
+INV-00138,PCZH0014,TechSmith,Snagit 2024,24.2.0,2026-03-15
+INV-00138,PCZH0014,Google,Google Chrome,131.0.6778.86,2024-05-22
+INV-00138,PCZH0014,Notepad++ Team,Notepad++ (64-bit x64),8.7,2026-08-17
+INV-00139,PCZH0015,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2026-08-25
+INV-00139,PCZH0015,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2025-12-31
+INV-00139,PCZH0015,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2026-07-08
+INV-00139,PCZH0015,Adobe,Adobe Photoshop 2025,26.1.0,2025-11-24
+INV-00139,PCZH0015,TechSmith,Snagit 2024,24.2.0,2026-08-23
+INV-00139,PCZH0015,Google,Google Chrome,131.0.6778.86,2026-03-04
+INV-00139,PCZH0015,Igor Pavlov,7-Zip (x64),24.08,2025-06-14
+INV-00140,PCZH0016,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2025-10-27
+INV-00140,PCZH0016,Adobe,Adobe Acrobat Pro (64-bit),24.004.20220,2024-07-06
+INV-00140,PCZH0016,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2025-09-25
+INV-00140,PCZH0016,Google,Google Chrome,131.0.6778.86,2026-10-28
+INV-00140,PCZH0016,Igor Pavlov,7-Zip (x64),23.01,2025-03-08
+INV-00140,PCZH0016,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-08-12
+INV-00141,PCBE0004,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.18129.20116,2026-06-10
+INV-00141,PCBE0004,Adobe,Adobe Acrobat Reader (64-bit),24.003.20180,2026-10-25
+INV-00141,PCBE0004,Adobe,Adobe Photoshop 2025,26.1.0,2026-07-15
+INV-00141,PCBE0004,Google,Google Chrome,130.0.6723.117,2026-02-02
+INV-00141,PCBE0004,Igor Pavlov,7-Zip (x64),23.01,2024-09-26
+INV-00141,PCBE0004,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-03-05
+INV-00143,PCBE0005,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2023-09-23
+INV-00143,PCBE0005,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2025-09-26
+INV-00143,PCBE0005,Igor Pavlov,7-Zip (x64),23.01,2023-12-05
+INV-00143,PCBE0005,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-12-29
+INV-00144,PCBS0006,Microsoft,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156,2025-09-06
+INV-00144,PCBS0006,Adobe,Adobe Acrobat Reader (64-bit),24.004.20220,2026-02-24
+INV-00144,PCBS0006,win.rar GmbH,WinRAR (64-bit),7.01,2025-10-27
+INV-00144,PCBS0006,Google,Google Chrome,130.0.6723.117,2025-12-30
+INV-00144,PCBS0006,Igor Pavlov,7-Zip (x64),23.01,2026-08-06
+INV-00144,PCBS0006,"Zoom Video Communications, Inc.",Zoom Workplace (64-bit),6.2.7,2025-12-17
+INV-00144,PCBS0006,SAP SE,SAP GUI for Windows 8.00,8.00,2025-11-05

@@ -1,0 +1,477 @@
+{
+  "parameters": {
+    "seed": 42,
+    "count": 200,
+    "reference_date": "2026-11-11"
+  },
+  "notes": [
+    "Kennzahlen beziehen sich auf die Geräte aus dem Inventar-Export (ohne Scan-Dubletten).",
+    "In Betrieb = install_status Installed oder In Maintenance.",
+    "Lizenznutzung ist vereinfacht gezählt (siehe license_usage im Generator)."
+  ],
+  "counts": {
+    "devices_inventory": 200,
+    "devices_scan_duplicates": 12,
+    "device_rows_total": 212,
+    "users": 130,
+    "users_inactive": 4,
+    "installations": 582,
+    "by_category": {
+      "laptop": 110,
+      "desktop": 35,
+      "server": 18,
+      "printer": 10,
+      "network": 15,
+      "smartphone": 12
+    },
+    "by_status": {
+      "Installed": 139,
+      "Retired": 45,
+      "In Stock": 11,
+      "In Maintenance": 5
+    }
+  },
+  "kpis": {
+    "warranty_ends_2027_all": 24,
+    "warranty_ends_2027_in_use": 22,
+    "warranty_expired_in_use": 56,
+    "windows10_in_use": 3
+  },
+  "issue_types": {
+    "assigned_to_inactive_user": "Gerät in Betrieb, der zugewiesene Benutzer ist inaktiv (Austritt nicht verarbeitet)",
+    "installed_without_user": "Endgerät in Betrieb ohne zugewiesenen Benutzer",
+    "retired_with_user": "Ausgemustertes Endgerät ist noch einem Benutzer zugewiesen",
+    "missing_serial_number": "Seriennummer fehlt",
+    "missing_location": "Standort fehlt",
+    "manufacturer_name_variant": "Herstellername weicht von der Normschreibweise ab",
+    "duplicate_same_serial": "Dublette aus dem Netzwerk-Scan: gleiche Seriennummer, Name als FQDN",
+    "duplicate_serial_variant": "Dublette aus dem Netzwerk-Scan: Seriennummer in anderer Schreibweise, Name als FQDN, andere MAC",
+    "duplicate_same_name_no_serial": "Dublette aus dem Netzwerk-Scan: gleicher Name, keine Seriennummer"
+  },
+  "issue_counts": {
+    "assigned_to_inactive_user": 4,
+    "installed_without_user": 5,
+    "retired_with_user": 3,
+    "missing_serial_number": 8,
+    "missing_location": 6,
+    "manufacturer_name_variant": 15,
+    "duplicate_same_serial": 6,
+    "duplicate_serial_variant": 3,
+    "duplicate_same_name_no_serial": 3
+  },
+  "issues": [
+    {
+      "type": "assigned_to_inactive_user",
+      "source_id": "INV-00092",
+      "name": "NBWI0009",
+      "detail": "Benutzer simon.steiner ist inaktiv"
+    },
+    {
+      "type": "assigned_to_inactive_user",
+      "source_id": "INV-00030",
+      "name": "NBZH0018",
+      "detail": "Benutzer lukas.wyss ist inaktiv"
+    },
+    {
+      "type": "assigned_to_inactive_user",
+      "source_id": "INV-00077",
+      "name": "NBLU0006",
+      "detail": "Benutzer selina.baumann ist inaktiv"
+    },
+    {
+      "type": "assigned_to_inactive_user",
+      "source_id": "INV-00017",
+      "name": "NBBE0003",
+      "detail": "Benutzer daniel.buehler ist inaktiv"
+    },
+    {
+      "type": "installed_without_user",
+      "source_id": "INV-00057",
+      "name": "NBZH0037",
+      "detail": "Benutzer elena.buehler entfernt"
+    },
+    {
+      "type": "installed_without_user",
+      "source_id": "INV-00035",
+      "name": "NBBS0005",
+      "detail": "Benutzer laura.arnold entfernt"
+    },
+    {
+      "type": "installed_without_user",
+      "source_id": "INV-00110",
+      "name": "NBBS0012",
+      "detail": "Benutzer sandra.roth entfernt"
+    },
+    {
+      "type": "installed_without_user",
+      "source_id": "INV-00019",
+      "name": "NBBS0002",
+      "detail": "Benutzer martina.marti entfernt"
+    },
+    {
+      "type": "installed_without_user",
+      "source_id": "INV-00143",
+      "name": "PCBE0005",
+      "detail": "Benutzer julia.zimmermann2 entfernt"
+    },
+    {
+      "type": "retired_with_user",
+      "source_id": "INV-00192",
+      "name": "MOBZH0003",
+      "detail": "noch zugewiesen an michael.steiner"
+    },
+    {
+      "type": "retired_with_user",
+      "source_id": "INV-00066",
+      "name": "NBZH0043",
+      "detail": "noch zugewiesen an michael.steiner"
+    },
+    {
+      "type": "retired_with_user",
+      "source_id": "INV-00193",
+      "name": "MOBZH0004",
+      "detail": "noch zugewiesen an michael.schmid"
+    },
+    {
+      "type": "missing_serial_number",
+      "source_id": "INV-00176",
+      "name": "SWBE01",
+      "detail": "Seriennummer FOC0YG3JS6Q entfernt"
+    },
+    {
+      "type": "missing_serial_number",
+      "source_id": "INV-00044",
+      "name": "NBBS0007",
+      "detail": "Seriennummer 5CG2MF9ZE9 entfernt"
+    },
+    {
+      "type": "missing_serial_number",
+      "source_id": "INV-00190",
+      "name": "MOBZH0002",
+      "detail": "Seriennummer NMUYW874F0 entfernt"
+    },
+    {
+      "type": "missing_serial_number",
+      "source_id": "INV-00148",
+      "name": "SRVBEBKP01",
+      "detail": "Seriennummer HGCAJLX entfernt"
+    },
+    {
+      "type": "missing_serial_number",
+      "source_id": "INV-00031",
+      "name": "NBBS0004",
+      "detail": "Seriennummer PFHU79VC entfernt"
+    },
+    {
+      "type": "missing_serial_number",
+      "source_id": "INV-00037",
+      "name": "NBZH0022",
+      "detail": "Seriennummer ZU02XDX entfernt"
+    },
+    {
+      "type": "missing_serial_number",
+      "source_id": "INV-00134",
+      "name": "PCLU0004",
+      "detail": "Seriennummer 5DZNTZ5 entfernt"
+    },
+    {
+      "type": "missing_serial_number",
+      "source_id": "INV-00065",
+      "name": "NBZH0042",
+      "detail": "Seriennummer PFAVGXU5 entfernt"
+    },
+    {
+      "type": "missing_location",
+      "source_id": "INV-00094",
+      "name": "NBZH0058",
+      "detail": "Standort Muster AG Zürich entfernt"
+    },
+    {
+      "type": "missing_location",
+      "source_id": "INV-00159",
+      "name": "SRVZHDC02",
+      "detail": "Standort Muster AG Zürich entfernt"
+    },
+    {
+      "type": "missing_location",
+      "source_id": "INV-00183",
+      "name": "SWZH01",
+      "detail": "Standort Muster AG Zürich entfernt"
+    },
+    {
+      "type": "missing_location",
+      "source_id": "INV-00101",
+      "name": "NBZH0063",
+      "detail": "Standort Muster AG Zürich entfernt"
+    },
+    {
+      "type": "missing_location",
+      "source_id": "INV-00126",
+      "name": "PCZH0009",
+      "detail": "Standort Muster AG Zürich entfernt"
+    },
+    {
+      "type": "missing_location",
+      "source_id": "INV-00058",
+      "name": "NBZH0038",
+      "detail": "Standort Muster AG Zürich entfernt"
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00006",
+      "name": "NBBS0001",
+      "detail": "DELL statt Dell Inc."
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00113",
+      "name": "PCBE0002",
+      "detail": "HP Inc. statt Hewlett-Packard"
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00107",
+      "name": "NBBE0010",
+      "detail": "DELL statt Dell Inc."
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00041",
+      "name": "NBZH0026",
+      "detail": "Lenovo Group Ltd. statt Lenovo"
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00076",
+      "name": "NBLU0005",
+      "detail": "LENOVO statt Lenovo"
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00011",
+      "name": "NBZH0007",
+      "detail": "Dell statt Dell Inc."
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00144",
+      "name": "PCBS0006",
+      "detail": "LENOVO statt Lenovo"
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00130",
+      "name": "PCBS0002",
+      "detail": "DELL statt Dell Inc."
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00182",
+      "name": "SWBS02",
+      "detail": "Cisco Systems, Inc. statt Cisco"
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00088",
+      "name": "NBZH0055",
+      "detail": "Apple Inc. statt Apple"
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00170",
+      "name": "PRTBE02",
+      "detail": "hp statt Hewlett-Packard"
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00145",
+      "name": "PCZH0018",
+      "detail": "DELL statt Dell Inc."
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00056",
+      "name": "NBZH0036",
+      "detail": "DELL statt Dell Inc."
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00185",
+      "name": "SWBS03",
+      "detail": "Cisco Systems, Inc. statt Cisco"
+    },
+    {
+      "type": "manufacturer_name_variant",
+      "source_id": "INV-00055",
+      "name": "NBLU0003",
+      "detail": "Lenovo Group Ltd. statt Lenovo"
+    },
+    {
+      "type": "duplicate_same_serial",
+      "source_id": "SCAN-0001",
+      "name": "nbzh0032.muster.example",
+      "detail": "gleiche Seriennummer, Name als FQDN",
+      "duplicate_of": "INV-00050"
+    },
+    {
+      "type": "duplicate_same_serial",
+      "source_id": "SCAN-0002",
+      "name": "nbzh0002.muster.example",
+      "detail": "gleiche Seriennummer, Name als FQDN",
+      "duplicate_of": "INV-00003"
+    },
+    {
+      "type": "duplicate_same_serial",
+      "source_id": "SCAN-0003",
+      "name": "srvbefile01.muster.example",
+      "detail": "gleiche Seriennummer, Name als FQDN",
+      "duplicate_of": "INV-00155"
+    },
+    {
+      "type": "duplicate_same_serial",
+      "source_id": "SCAN-0004",
+      "name": "nbzh0057.muster.example",
+      "detail": "gleiche Seriennummer, Name als FQDN",
+      "duplicate_of": "INV-00093"
+    },
+    {
+      "type": "duplicate_same_serial",
+      "source_id": "SCAN-0005",
+      "name": "nbzh0045.muster.example",
+      "detail": "gleiche Seriennummer, Name als FQDN",
+      "duplicate_of": "INV-00068"
+    },
+    {
+      "type": "duplicate_same_serial",
+      "source_id": "SCAN-0006",
+      "name": "nbbs0011.muster.example",
+      "detail": "gleiche Seriennummer, Name als FQDN",
+      "duplicate_of": "INV-00084"
+    },
+    {
+      "type": "duplicate_serial_variant",
+      "source_id": "SCAN-0007",
+      "name": "nbzh0009.muster.example",
+      "detail": "Seriennummer in Kleinbuchstaben, Name als FQDN, andere MAC (zweite Netzwerkkarte), keine IP",
+      "duplicate_of": "INV-00014"
+    },
+    {
+      "type": "duplicate_serial_variant",
+      "source_id": "SCAN-0008",
+      "name": "srvzhdb01.muster.example",
+      "detail": "Seriennummer mit Leerzeichen am Ende, Name als FQDN, andere MAC (zweite Netzwerkkarte), keine IP",
+      "duplicate_of": "INV-00161"
+    },
+    {
+      "type": "duplicate_serial_variant",
+      "source_id": "SCAN-0009",
+      "name": "pczh0014.muster.example",
+      "detail": "Seriennummer in Kleinbuchstaben, Name als FQDN, andere MAC (zweite Netzwerkkarte), keine IP",
+      "duplicate_of": "INV-00138"
+    },
+    {
+      "type": "duplicate_same_name_no_serial",
+      "source_id": "SCAN-0010",
+      "name": "NBLU0009",
+      "detail": "gleicher Name, keine Seriennummer",
+      "duplicate_of": "INV-00099"
+    },
+    {
+      "type": "duplicate_same_name_no_serial",
+      "source_id": "SCAN-0011",
+      "name": "NBWI0004",
+      "detail": "gleicher Name, keine Seriennummer",
+      "duplicate_of": "INV-00051"
+    },
+    {
+      "type": "duplicate_same_name_no_serial",
+      "source_id": "SCAN-0012",
+      "name": "PCZH0013",
+      "detail": "gleicher Name, keine Seriennummer",
+      "duplicate_of": "INV-00137"
+    }
+  ],
+  "sam": [
+    {
+      "product": "Microsoft 365 Apps for enterprise",
+      "publisher": "Microsoft",
+      "metric": "Per User",
+      "purchased_rights": 94,
+      "usage": 89,
+      "difference": 5,
+      "status": "überlizenziert"
+    },
+    {
+      "product": "Visio Plan 2",
+      "publisher": "Microsoft",
+      "metric": "Per User",
+      "purchased_rights": 9,
+      "usage": 11,
+      "difference": -2,
+      "status": "unterlizenziert"
+    },
+    {
+      "product": "Project Professional 2021",
+      "publisher": "Microsoft",
+      "metric": "Per Device",
+      "purchased_rights": 1,
+      "usage": 0,
+      "difference": 1,
+      "status": "ungenutzt"
+    },
+    {
+      "product": "Acrobat Pro",
+      "publisher": "Adobe",
+      "metric": "Per User",
+      "purchased_rights": 20,
+      "usage": 24,
+      "difference": -4,
+      "status": "unterlizenziert"
+    },
+    {
+      "product": "Photoshop",
+      "publisher": "Adobe",
+      "metric": "Per User",
+      "purchased_rights": 13,
+      "usage": 10,
+      "difference": 3,
+      "status": "überlizenziert"
+    },
+    {
+      "product": "AutoCAD LT",
+      "publisher": "Autodesk",
+      "metric": "Per User",
+      "purchased_rights": 8,
+      "usage": 8,
+      "difference": 0,
+      "status": "ausgeglichen"
+    },
+    {
+      "product": "Snagit",
+      "publisher": "TechSmith",
+      "metric": "Per User",
+      "purchased_rights": 13,
+      "usage": 11,
+      "difference": 2,
+      "status": "überlizenziert"
+    },
+    {
+      "product": "PyCharm Professional",
+      "publisher": "JetBrains",
+      "metric": "Per User",
+      "purchased_rights": 5,
+      "usage": 6,
+      "difference": -1,
+      "status": "unterlizenziert"
+    },
+    {
+      "product": "WinRAR",
+      "publisher": "win.rar GmbH",
+      "metric": "Per Device",
+      "purchased_rights": 0,
+      "usage": 10,
+      "difference": -10,
+      "status": "ohne Lizenz"
+    }
+  ]
+}

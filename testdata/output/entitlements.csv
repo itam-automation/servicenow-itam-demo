@@ -1,0 +1,9 @@
+license_id,publisher,product,metric,purchased_rights,unit_cost,start_date,end_date
+LIC-0001,Microsoft,Microsoft 365 Apps for enterprise,Per User,94,150,2026-01-01,2026-12-31
+LIC-0002,Microsoft,Visio Plan 2,Per User,9,180,2026-01-01,2026-12-31
+LIC-0003,Microsoft,Project Professional 2021,Per Device,1,1100,2023-03-01,
+LIC-0004,Adobe,Acrobat Pro,Per User,20,240,2026-01-01,2026-12-31
+LIC-0005,Adobe,Photoshop,Per User,13,400,2026-01-01,2026-12-31
+LIC-0006,Autodesk,AutoCAD LT,Per User,8,550,2026-01-01,2026-12-31
+LIC-0007,TechSmith,Snagit,Per User,13,70,2023-03-01,
+LIC-0008,JetBrains,PyCharm Professional,Per User,5,260,2026-01-01,2026-12-31

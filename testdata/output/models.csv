@@ -1,0 +1,37 @@
+manufacturer,name,category
+Dell Inc.,Latitude 5410,laptop
+Dell Inc.,Latitude 5420,laptop
+Dell Inc.,Latitude 5440,laptop
+Dell Inc.,Latitude 5450,laptop
+Lenovo,ThinkPad T14 Gen 1,laptop
+Lenovo,ThinkPad T14 Gen 3,laptop
+Lenovo,ThinkPad T14 Gen 5,laptop
+Lenovo,ThinkPad X1 Carbon Gen 11,laptop
+Hewlett-Packard,EliteBook 840 G8,laptop
+Hewlett-Packard,EliteBook 840 G10,laptop
+Apple,MacBook Pro 14 (M3),laptop
+Apple,MacBook Pro 14 (M4),laptop
+Dell Inc.,OptiPlex 7080,desktop
+Dell Inc.,OptiPlex 7090,desktop
+Dell Inc.,OptiPlex 7010,desktop
+Hewlett-Packard,Elite Mini 800 G9,desktop
+Lenovo,ThinkCentre M70q Gen 4,desktop
+Dell Inc.,PowerEdge R640,server
+Dell Inc.,PowerEdge R650,server
+Dell Inc.,PowerEdge R660,server
+Hewlett Packard Enterprise,ProLiant DL380 Gen10 Plus,server
+Hewlett Packard Enterprise,ProLiant DL380 Gen11,server
+Lenovo,ThinkSystem SR650 V2,server
+Hewlett-Packard,Color LaserJet Enterprise M555,printer
+Hewlett-Packard,Color LaserJet Enterprise 5700,printer
+Brother,HL-L8360CDW,printer
+Cisco,Catalyst 9200L-48P-4G,network
+Cisco,Catalyst 9300-48P,network
+Fortinet,FortiGate 60F,network
+Apple,iPhone 12,smartphone
+Apple,iPhone 13,smartphone
+Apple,iPhone 15,smartphone
+Apple,iPhone 16,smartphone
+Samsung,Galaxy S21,smartphone
+Samsung,Galaxy S23,smartphone
+Samsung,Galaxy S24,smartphone

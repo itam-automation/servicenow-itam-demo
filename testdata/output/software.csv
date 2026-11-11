@@ -1,0 +1,23 @@
+publisher,product,display_name,versions,license_metric,platforms
+Microsoft,Microsoft 365 Apps for enterprise,Microsoft 365 Apps for enterprise - de-de,16.0.17928.20156 | 16.0.18129.20116,Per User,win | mac
+Microsoft,Visio Plan 2,Microsoft Visio - de-de,16.0.18129.20116,Per User,win
+Microsoft,Project Professional 2021,Microsoft Project Professional 2021 - de-de,16.0.14332.20763,Per Device,win
+Microsoft,Power BI Desktop,Microsoft PowerBI Desktop (x64),2.137.952.0,Free,win
+Microsoft,Visual Studio Code,Microsoft Visual Studio Code,1.95.2,Free,win | mac
+Microsoft,SQL Server Management Studio,SQL Server Management Studio,20.2.30.0,Free,win
+Adobe,Acrobat Pro,Adobe Acrobat Pro (64-bit),24.004.20220,Per User,win | mac
+Adobe,Acrobat Reader,Adobe Acrobat Reader (64-bit),24.003.20180 | 24.004.20220,Free,win | mac
+Adobe,Photoshop,Adobe Photoshop 2025,26.1.0,Per User,win | mac
+Autodesk,AutoCAD LT,AutoCAD LT 2025 - Deutsch (German),25.0.58.0,Per User,win
+TechSmith,Snagit,Snagit 2024,24.2.0,Per User,win | mac
+JetBrains,PyCharm Professional,PyCharm 2024.3,2024.3,Per User,win | mac
+win.rar GmbH,WinRAR,WinRAR (64-bit),6.24 | 7.01,Per Device,win
+Google,Chrome,Google Chrome,130.0.6723.117 | 131.0.6778.86,Free,win | mac
+Mozilla,Firefox,Mozilla Firefox (x64 de),132.0.2,Free,win | mac
+Igor Pavlov,7-Zip,7-Zip (x64),23.01 | 24.08,Free,win
+Notepad++ Team,Notepad++,Notepad++ (64-bit x64),8.7,Free,win
+Python Software Foundation,Python,Python 3.12 (64-bit),3.12.7,Free,win | mac
+The Git Development Community,Git,Git,2.47.0,Free,win | mac
+"Zoom Video Communications, Inc.",Zoom Workplace,Zoom Workplace (64-bit),6.2.7,Free,win | mac
+SAP SE,SAP GUI for Windows,SAP GUI for Windows 8.00,8.00,Free,win
+KeePassXC Team,KeePassXC,KeePassXC,2.7.9,Free,win | mac
