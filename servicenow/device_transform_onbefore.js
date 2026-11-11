@@ -19,6 +19,12 @@
  *   die in der CMDB nicht mehr sichtbar wären, weil die Plattform sie beim Laden
  *   bereinigt (Standort vom Benutzer übernommen, Hersteller ohne Rücksicht auf
  *   Gross-/Kleinschreibung zugeordnet), werden hier gemeldet statt verschluckt.
+ * - Fehlerbehandlung: Jede Zeile wird mit ignore = true übersprungen (die Transform
+ *   Map schreibt nichts, das CI schreibt die IRE). error = true würde in einem
+ *   onBefore-Skript die Transformation des ganzen Import Sets anhalten (alle
+ *   folgenden Zeilen blieben «Pending»). Fehler stehen deshalb im Kommentar der
+ *   Zeile («Fehler: …», so zählt sie der Loader) und im Import-Log; auch
+ *   Skriptfehler werden abgefangen.
  */
 (function runTransformScript(source, map, log, target) {
     var DATA_SOURCES = {'Inventar-Export': 'MusterInventar', 'Netzwerk-Scan': 'MusterNetzScan'};
@@ -58,101 +64,113 @@
         return gr.insert();
     }
 
-    var className = val('sn_class');
-    var dataSource = DATA_SOURCES[val('source')];
-    if (!className || !dataSource) {
-        error = true;
-        error_message = 'Klasse oder Quelle fehlt/unbekannt: ' + className + ' / ' + val('source');
-        return;
+    function fail(message) {
+        source.sys_import_state_comment = 'Fehler: ' + message;
+        log.error((val('source_id') || 'Zeile ohne Quell-ID') + ': ' + message);
     }
 
-    var values = {};
-    PLAIN_FIELDS.forEach(function (f) {
-        if (val(f)) {
-            values[f] = val(f);
-        }
-    });
-    if (val('serial_number')) {
-        values.serial_number = val('serial_number').replace(/\s+/g, '').toUpperCase();
+    // Zuerst: Zeile überspringen statt das Import Set anzuhalten (siehe Kopfkommentar).
+    ignore = true;
+    try {
+        transformRow();
+    } catch (e) {
+        fail('Skriptfehler: ' + e);
     }
-    if (COMPUTER_CLASSES.indexOf(className) >= 0) {
-        COMPUTER_FIELDS.forEach(function (f) {
+
+    function transformRow() {
+        var className = val('sn_class');
+        var dataSource = DATA_SOURCES[val('source')];
+        if (!className || !dataSource) {
+            fail('Klasse oder Quelle fehlt/unbekannt: ' + className + ' / ' + val('source'));
+            return;
+        }
+
+        var values = {};
+        PLAIN_FIELDS.forEach(function (f) {
             if (val(f)) {
                 values[f] = val(f);
             }
         });
-    }
-    if (val('install_status')) {
-        values.install_status = STATUS[val('install_status')];
-    }
-
-    var companyId = val('company') ? find('core_company', 'name', val('company')) : '';
-    var modelId = val('model_id') ? find('cmdb_hardware_product_model', 'name', val('model_id')) : '';
-    var refs = {
-        company: companyId,
-        manufacturer: val('manufacturer') ? manufacturer(val('manufacturer')) : '',
-        model_id: modelId,
-        assigned_to: val('assigned_to') ? find('sys_user', 'user_name', val('assigned_to')) : '',
-        location: val('location') ? find('cmn_location', 'name', val('location')) : '',
-        department: val('department') ? find('cmn_department', 'name', val('department'), 'company', companyId) : ''
-    };
-    var missing = [];
-    for (var field in refs) {
-        if (refs[field]) {
-            values[field] = refs[field];
-        } else if (val(field)) {
-            missing.push(field + '=' + val(field));
+        if (val('serial_number')) {
+            values.serial_number = val('serial_number').replace(/\s+/g, '').toUpperCase();
         }
-    }
-
-    // Prüfung der Quelldaten, vor dem Laden
-    var findings = [];
-    if (dataSource == 'MusterInventar' && !val('location')) {
-        // Das Inventar ist führend für den Standort (Abgleichsregel); der Scan liefert keinen.
-        findings.push('location_missing');
-    }
-    if (modelId && val('manufacturer')) {
-        var model = new GlideRecord('cmdb_hardware_product_model');
-        model.get(modelId);
-        var expected = model.manufacturer.getDisplayValue();
-        if (expected && expected !== val('manufacturer')) {
-            // exakter Vergleich: «LENOVO» ist nicht «Lenovo», auch wenn die Datenbank beides gleich findet
-            findings.push('manufacturer_mismatch: ' + val('manufacturer') + ' (Modell: ' + expected + ')');
+        if (COMPUTER_CLASSES.indexOf(className) >= 0) {
+            COMPUTER_FIELDS.forEach(function (f) {
+                if (val(f)) {
+                    values[f] = val(f);
+                }
+            });
         }
-    }
-    source.setValue('u_dq_findings', findings.join('; '));
+        if (val('install_status')) {
+            values.install_status = STATUS[val('install_status')];
+        }
 
-    var payload = {
-        items: [{
-            className: className,
-            values: values,
-            sys_object_source_info: {source_name: dataSource, source_native_key: val('source_id')}
-        }]
-    };
-    var output = JSON.parse(sn_cmdb.IdentificationEngine.createOrUpdateCI(dataSource, JSON.stringify(payload)));
-    var item = output.items[0];
-    var errors = (item.errors || []).map(function (e) {
-        return e.message || e.error;
-    });
-    var matched = (item.identificationAttempts || []).filter(function (a) {
-        return a.attemptResult == 'MATCHED';
-    }).map(function (a) {
-        return (a.attributes || []).join('+');
-    });
+        var companyId = val('company') ? find('core_company', 'name', val('company')) : '';
+        var modelId = val('model_id') ? find('cmdb_hardware_product_model', 'name', val('model_id')) : '';
+        var refs = {
+            company: companyId,
+            manufacturer: val('manufacturer') ? manufacturer(val('manufacturer')) : '',
+            model_id: modelId,
+            assigned_to: val('assigned_to') ? find('sys_user', 'user_name', val('assigned_to')) : '',
+            location: val('location') ? find('cmn_location', 'name', val('location')) : '',
+            department: val('department') ? find('cmn_department', 'name', val('department'), 'company', companyId) : ''
+        };
+        var missing = [];
+        for (var field in refs) {
+            if (refs[field]) {
+                values[field] = refs[field];
+            } else if (val(field)) {
+                missing.push(field + '=' + val(field));
+            }
+        }
 
-    source.setValue('u_ire_operation', item.operation || '');
-    source.setValue('u_ire_ci', item.sysId || '');
-    source.setValue('u_ire_match', matched.join(', '));
-    source.setValue('u_ire_missing', missing.join(', '));
-    source.sys_import_state_comment = 'IRE ' + (item.operation || '') + ' ' + (item.sysId || '') +
-        (matched.length ? ' via ' + matched.join(', ') : '') + (errors.length ? ' Fehler: ' + errors.join('; ') : '') +
-        (findings.length ? ' | DQ: ' + findings.join('; ') : '');
+        // Prüfung der Quelldaten, vor dem Laden
+        var findings = [];
+        if (dataSource == 'MusterInventar' && !val('location')) {
+            // Das Inventar ist führend für den Standort (Abgleichsregel); der Scan liefert keinen.
+            findings.push('location_missing');
+        }
+        if (modelId && val('manufacturer')) {
+            var model = new GlideRecord('cmdb_hardware_product_model');
+            model.get(modelId);
+            var expected = model.manufacturer.getDisplayValue();
+            if (expected && expected !== val('manufacturer')) {
+                // exakter Vergleich: «LENOVO» ist nicht «Lenovo», auch wenn die Datenbank beides gleich findet
+                findings.push('manufacturer_mismatch: ' + val('manufacturer') + ' (Modell: ' + expected + ')');
+            }
+        }
+        source.setValue('u_dq_findings', findings.join('; '));
 
-    if (errors.length) {
-        error = true;
-        error_message = 'IRE: ' + errors.join('; ');
-    } else {
-        // Die IRE hat das CI geschrieben; die Transform Map selbst schreibt nichts.
-        ignore = true;
+        var payload = {
+            items: [{
+                className: className,
+                values: values,
+                sys_object_source_info: {source_name: dataSource, source_native_key: val('source_id')}
+            }]
+        };
+        var output = JSON.parse(sn_cmdb.IdentificationEngine.createOrUpdateCI(dataSource, JSON.stringify(payload)));
+        var item = output.items[0];
+        var errors = (item.errors || []).map(function (e) {
+            return e.message || e.error;
+        });
+        var matched = (item.identificationAttempts || []).filter(function (a) {
+            return a.attemptResult == 'MATCHED';
+        }).map(function (a) {
+            return (a.attributes || []).join('+');
+        });
+
+        source.setValue('u_ire_operation', item.operation || '');
+        source.setValue('u_ire_ci', item.sysId || '');
+        source.setValue('u_ire_match', matched.join(', '));
+        source.setValue('u_ire_missing', missing.join(', '));
+        source.sys_import_state_comment = 'IRE ' + (item.operation || '') + ' ' + (item.sysId || '') +
+            (matched.length ? ' via ' + matched.join(', ') : '') + (errors.length ? ' Fehler: ' + errors.join('; ') : '') +
+            (findings.length ? ' | DQ: ' + findings.join('; ') : '');
+
+        if (errors.length) {
+            // Die Zeile bleibt übersprungen; der Kommentar oben enthält «Fehler: …» für den Loader.
+            log.error(val('source_id') + ': IRE: ' + errors.join('; '));
+        }
+        // Ohne Fehler hat die IRE das CI geschrieben; die Transform Map selbst schreibt nichts.
     }
 })(source, map, log, target);
