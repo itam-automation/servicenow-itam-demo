@@ -36,6 +36,15 @@ Milestone 3 (software asset management), captured in the update set **«ITAM Dem
 | Scripted REST API «ITAM Demo» | `sys_ws_definition`, `sys_ws_operation` | `GET /license_position`, [`rest_license_position.js`](rest_license_position.js); requires authentication and the default REST ACL; the base path contains the instance's namespace and is configured in `.env` (`SN_ITAM_API`) |
 | Column types of the staging tables | `sys_dictionary` | set to `string` by name (they had been created with the type's sys_id) |
 
+Import check on the source data, captured in the update set **«ITAM Demo - DQ Importprüfung»** (not exported as XML yet):
+
+| Item | Table | Details |
+|---|---|---|
+| Column `u_dq_findings` | `sys_dictionary` on `u_muster_device_imp` | findings of the import check per row |
+| onBefore script of «Muster AG Geräte -> CMDB (IRE)» | `sys_transform_script` | [`device_transform_onbefore.js`](device_transform_onbefore.js): rules «location missing in the inventory export» and «manufacturer differs from the model» |
+| Report «ITAM DQ 8 - Quelldaten-Befunde beim Import» | `sys_report` | list of import set rows with a finding |
+| List layout | `sys_ui_list` on `u_muster_device_imp` | source ID, name, source, manufacturer, model, location, findings (set on the instance; not captured by the update set, which holds 4 updates) |
+
 The staging tables and transform maps are generated from one definition, [`loader/staging.py`](../loader/staging.py) (`python3 loader/staging.py` prints the full specification including the scripts).
 
 ## Update sets as XML

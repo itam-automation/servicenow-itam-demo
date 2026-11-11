@@ -10,7 +10,7 @@ Check on 2026-11-11 with `python3 loader/check_license_position.py` (read only).
 | Software packages in use (raw name + version) | 26 |
 | Licensed or license-relevant software models | 9 |
 | Licenses (`alm_license`) | 8 |
-| Position calculated in ServiceNow | matches (calculated 2026-11-11 08:22:31 UTC) |
+| Position calculated in ServiceNow | matches (calculated 2026-11-11 09:47:31 UTC) |
 
 | Product | Publisher | Metric | Rights | Usage | Difference | Status |
 |---|---|---|---:|---:|---:|---|

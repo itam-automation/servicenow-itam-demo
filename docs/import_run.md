@@ -4,12 +4,20 @@ Full run on 2026-11-11 via the Import Set API (`insertMultiple`), one import set
 
 | Import set | Staging table | Target | Rows | Result |
 |---|---|---|---:|---|
-| ISET0010012 | `u_muster_location_imp` | cmn_location | 5 | 5 inserted |
-| ISET0010013 | `u_muster_department_imp` | cmn_department | 9 | 9 inserted |
-| ISET0010014 | `u_muster_user_imp` | sys_user | 130 | 130 inserted |
-| ISET0010015 | `u_muster_model_imp` | cmdb_hardware_product_model | 36 | 36 inserted |
-| ISET0010016 | `u_muster_device_imp` | IRE (Inventar-Export) | 200 | 200 INSERT |
-| ISET0010017 | `u_muster_device_imp` | IRE (Netzwerk-Scan) | 12 | 3 INSERT, 9 UPDATE |
+| ISET0010027 | `u_muster_location_imp` | cmn_location | 5 | 5 inserted |
+| ISET0010028 | `u_muster_department_imp` | cmn_department | 9 | 9 inserted |
+| ISET0010029 | `u_muster_user_imp` | sys_user | 130 | 130 inserted |
+| ISET0010030 | `u_muster_model_imp` | cmdb_hardware_product_model | 36 | 36 inserted |
+| ISET0010031 | `u_muster_device_imp` | IRE (Inventar-Export) | 200 | 200 INSERT |
+| ISET0010032 | `u_muster_device_imp` | IRE (Netzwerk-Scan) | 12 | 3 INSERT, 9 UPDATE |
+| ISET0010033 | `u_muster_software_imp` | cmdb_software_product_model | 22 | 22 inserted |
+| ISET0010034 | `u_muster_installation_imp` | cmdb_software_instance | 582 | 582 inserted |
+| ISET0010035 | `u_muster_license_imp` | alm_license | 8 | 8 inserted |
+
+Import check on the source data (column `u_dq_findings`, report «ITAM DQ 8»):
+
+- location_missing: 6 rows
+- manufacturer_mismatch: 15 rows
 
 Duplicates from the network scan (compared with `ground_truth.json`):
 
