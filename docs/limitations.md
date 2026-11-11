@@ -40,7 +40,7 @@ Outbound e-mail is switched off on the PDI (`glide.email.smtp.active = false`). 
 
 ## Demo data
 
-- The demo changed Muster AG data on the PDI: three of the four leavers' devices were returned or reported lost (module 1), and two CI statuses were changed by `loader/simulate_drift.py` through the integration user to reproduce an integration update, then fixed with «Drift beheben» (one with the asset leading, one with the CI leading). The «53 of 53» result of `loader/check_data_quality.py` refers to the final run before the toolkit demo; a run today counts the three remediated leaver devices as no longer present.
+- The demo changed Muster AG data on the PDI: the devices of all four leavers were returned (three) or reported lost (one) through module 1, and two CI statuses were changed by `loader/simulate_drift.py` through the integration user to reproduce an integration update, then fixed with «Drift beheben» (one with the asset leading, one with the CI leading). The «53 of 53» result of `loader/check_data_quality.py` refers to the final run before the toolkit demo; a run today counts the four remediated leaver devices as no longer present.
 - `loader/check_dq_scorecard.py` compares a snapshot with the live CMDB. The baseline report [`dq_scorecard_baseline.md`](dq_scorecard_baseline.md) keeps the result of the run right after the baseline snapshot; [`dq_scorecard.md`](dq_scorecard.md) is the run after the demo.
 - The Python check reads the snapshot through the toolkit's REST API, which needs the role `x_371499_itamkit.user`. The integration user does not have it yet (role assignments are done by the instance owner); both checks ran with `--snapshot` from a saved REST answer, the raw records came live from the Table API.
 

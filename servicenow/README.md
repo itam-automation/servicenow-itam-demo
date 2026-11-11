@@ -49,13 +49,14 @@ The staging tables and transform maps are generated from one definition, [`loade
 
 ## Update sets as XML
 
-All four update sets are exported in [`update_sets/`](update_sets/):
+All update sets are exported in [`update_sets/`](update_sets/):
 
 | File | Content |
 |---|---|
 | `ITAM_Demo_Baustein2_CMDB-Import.xml` | 152 customer updates: data sources, reconciliation rule, 5 staging tables with columns, 5 transform maps with field maps and scripts, 10 reports |
 | `ITAM_Demo_Meilenstein2_Laptop-Anforderung.xml` | 15 customer updates: catalog item with variables, flow, business rule, fix script, ATF test, ATF property |
 | `ITAM_Demo_DQ_Importpruefung.xml` | 4 customer updates: column `u_dq_findings`, onBefore script of the device map with the import check, report «ITAM DQ 8» |
+| `ITAM_Toolkit_0.1.0.xml` | 374 customer updates of the scoped app «ITAM Toolkit» 0.1.0: 7 tables with dictionary, choices, ACLs and layouts, 8 script includes, 2 business rules, 2 scheduled jobs, fix script with the 15 DQ rules, 2 notifications, record producer «Austritt melden», 7 UI actions, Scripted REST API, 26 cross-scope privileges, 5 reports, 2 ATF tests; sources in [`../toolkit/`](../toolkit/), catalog in [`../docs/catalog.md`](../docs/catalog.md) |
 | `ITAM_Demo_Meilenstein3_SAM.xml` | 143 customer updates: 2 script includes, 3 staging tables and transform maps with scripts, table «ITAM Lizenzposition» with list layout, scheduled job, 2 reports, Scripted REST API, column type fix for the staging tables |
 
 To install on another instance: *System Update Sets → Retrieved Update Sets → Import Update Set from XML*, then *Preview* and *Commit* (Baustein 2, Meilenstein 2, Meilenstein 3, DQ Importprüfung in this order). The group «Muster AG IT-Asset-Management» is data and has to be created separately.

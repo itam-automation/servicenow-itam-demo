@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/itam-automation/servicenow-itam-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/itam-automation/servicenow-itam-demo/actions/workflows/ci.yml)
 
-> **Kurzfassung:** Portfolio-Projekt zu IT Asset Management auf einer persönlichen ServiceNow-Entwicklerinstanz (Release Brazil). Erfundene Testdaten der «Muster AG» (200 Geräte, 130 Benutzer, zwei Datenquellen) laufen über Import Sets mit Transform Maps in die CMDB. Die Identification and Reconciliation Engine (IRE) führt Dubletten aus dem Netzwerk-Scan zusammen. Reports in ServiceNow und ein Python-Check messen die Datenqualität gegen eine bekannte Wahrheit: **53 von 53 eingebauten Fehlern erkannt** (9 Dubletten von der IRE zusammengeführt, 41 von den Reports auf der CMDB gefunden, 3 von einer Prüfung der Quelldaten beim Import gemeldet, weil die Plattform sie beim Laden stillschweigend bereinigt und die CMDB sie nicht mehr zeigt). Ein Catalog Item «Laptop anfordern» mit Flow, Business Rule und ATF-Test weist Lagergeräte zu. Software Asset Management ohne SAM Pro: 582 Installationen und 8 Lizenzen ergeben in ServiceNow eine Lizenzposition je Produkt, **9 von 9 stimmen mit der bekannten Wahrheit überein**. Fragen an diese Daten laufen über eine Werkzeugschicht, die technisch nur lesen kann; 5 Testfragen stimmen mit der bekannten Wahrheit überein, 2 unzulässige Anfragen wurden abgewiesen. Darauf baut das **ITAM-Toolkit**, eine Scoped App für ServiceNow Core ohne HAM Pro und SAM Pro: Modul 1 sorgt dafür, dass Geräte von Austretenden zurückkommen (Fall je Austritt, Rückgabe-Aufgabe je Gerät, Erinnerungen an Tag 3, 7 und 14, Rückgabequote und Durchlaufzeit als Nachweis für ISO 27001 A.5.11), Modul 2 misst die Datenqualität mit 15 konfigurierbaren Regeln als gewichteten Score und findet Abweichungen zwischen Asset- und CI-Status. Der Score aus ServiceNow stimmt mit der unabhängigen Nachrechnung in Python überein (90.84 und 91.11), die ATF-Tests bestehen (73/73, 45/45). Alle Daten sind erfunden.
+> **Kurzfassung:** Portfolio-Projekt zu IT Asset Management auf einer persönlichen ServiceNow-Entwicklerinstanz (Release Brazil). Erfundene Testdaten der «Muster AG» (200 Geräte, 130 Benutzer, zwei Datenquellen) laufen über Import Sets mit Transform Maps in die CMDB. Die Identification and Reconciliation Engine (IRE) führt Dubletten aus dem Netzwerk-Scan zusammen. Reports in ServiceNow und ein Python-Check messen die Datenqualität gegen eine bekannte Wahrheit: **53 von 53 eingebauten Fehlern erkannt** (9 Dubletten von der IRE zusammengeführt, 41 von den Reports auf der CMDB gefunden, 3 von einer Prüfung der Quelldaten beim Import gemeldet, weil die Plattform sie beim Laden stillschweigend bereinigt und die CMDB sie nicht mehr zeigt). Ein Catalog Item «Laptop anfordern» mit Flow, Business Rule und ATF-Test weist Lagergeräte zu. Software Asset Management ohne SAM Pro: 582 Installationen und 8 Lizenzen ergeben in ServiceNow eine Lizenzposition je Produkt, **9 von 9 stimmen mit der bekannten Wahrheit überein**. Fragen an diese Daten laufen über eine Werkzeugschicht, die technisch nur lesen kann; 5 Testfragen stimmen mit der bekannten Wahrheit überein, 2 unzulässige Anfragen wurden abgewiesen. Darauf baut das **ITAM-Toolkit**, eine Scoped App für ServiceNow Core ohne HAM Pro und SAM Pro: Modul 1 sorgt dafür, dass Geräte von Austretenden zurückkommen (Fall je Austritt, Rückgabe-Aufgabe je Gerät, Erinnerungen an Tag 3, 7 und 14, Rückgabequote und Durchlaufzeit als Nachweis für ISO 27001 A.5.11), Modul 2 misst die Datenqualität mit 15 konfigurierbaren Regeln als gewichteten Score und findet Abweichungen zwischen Asset- und CI-Status. Der Score aus ServiceNow stimmt mit der unabhängigen Nachrechnung in Python überein (90.84 und 91.2), die ATF-Tests bestehen (76/76, 45/45). Alle Daten sind erfunden.
 
 ## Status
 
@@ -184,15 +184,15 @@ Asset return compliance, not an offboarding app: when someone leaves, every devi
 - **Reminders on day 3, 7 and 14** after the last working day to the manager and the HR contact (the leaver is inactive and receives no mail), optionally to a private address; day 14 escalates to the manager's manager (`sys_user.manager`).
 - **KPIs:** return rate and cycle time (last working day to closure), via REST and reports.
 
-Demo on the PDI with the four Muster AG leavers: HR reported Simon Steiner eight days late; the nightly sweep found the other three. The day-7 reminder was generated as an e-mail record (outbound mail is switched off on the PDI, so it was never sent).
+Demo on the PDI with the four Muster AG leavers: HR reported Simon Steiner eight days late; the nightly sweep found the other three. Later HR also reported Selina Baumann, whom the sweep had already found: the open case was updated with the real last working day instead of creating a second one. The day-7 reminder was generated as an e-mail record (outbound mail is switched off on the PDI, so it was never sent).
 
 | | |
 |---|---|
-| Cases | 4 (1 reported by HR, 3 found by the sweep), 3 closed, 1 open |
-| Return rate (closed cases) | 66.67 % (2 of 3 devices returned, 1 reported lost) |
-| Cycle time | 2.7 days on average, 8 days at most (the late report); 100 % closed by day 14 |
+| Cases | 4 (1 reported by HR, 3 found by the sweep), all 4 closed |
+| Return rate | 75 % (3 of 4 devices returned: 2 to stock, 1 to repair; 1 reported lost) |
+| Cycle time | 3.0 days on average, 8 days at most (the late report); 100 % closed by day 14 |
 | Reminder | 1 (day 7), `sys_email` record in the outbox, type *send-ready*, to the HR contact and the private address |
-| ATF test | 73 of 73 assertions passed |
+| ATF test | 76 of 76 assertions passed |
 
 | Leaver case after the return | Return task with the four outcomes | Reminder as e-mail record (body hidden in the screenshot: it contains the instance link) |
 |---|---|---|
@@ -226,7 +226,7 @@ If HAM Pro is licensed, its reclamation is the better choice; the toolkit is for
 | Ground truth | the 7 matching generic rules find **41 of 44** injected issues of their types; the other 3 were corrected by the platform on load and are reported by the project's import check |
 | Biggest gap | U01: **126 of 126** active users have no manager, so escalations in module 1 cannot reach anybody in this data |
 | Drift demo | an integration user changed the status of two CIs (`loader/simulate_drift.py`); the platform did not pass it on to the assets; 2 findings, fixed once with the asset leading and once with the CI leading, 2 audit rows |
-| Trend on the demo day | 90.84 → 91.11 (leavers processed) → 91.00 (drift) → 91.11 (drift fixed), each recomputed: the final snapshot is equal too ([report](docs/dq_scorecard.md)) |
+| Trend on the demo day | 90.84 → 91.11 (three leaver cases closed) → 91.00 (drift) → 91.11 (drift fixed) → 91.20 (last leaver case closed); the final snapshot recomputed in Python: 91.20, 15 of 15 rules equal ([report](docs/dq_scorecard.md)) |
 | ATF test | 45 of 45 assertions passed |
 
 | Rule table | Snapshot with one result per rule | «Drift beheben» with the preview of the chosen side |
@@ -249,7 +249,7 @@ The CMDB success advisor for HAM covers most of module 2 for customers with HAM 
 
 ### Demo
 
-| 1. HR reports a leaver, the case gets a return task, the device comes back | 2. Drift fixed with the asset leading and with the CI leading |
+| 1. HR reports a leaver the sweep had already found: the open case is updated, not duplicated; the device comes back and the case closes | 2. Drift fixed with the asset leading and with the CI leading |
 |---|---|
 | ![Leaver demo](docs/demo/demo_3_leaver_return.gif) | ![Drift demo](docs/demo/demo_4_drift_fix.gif) |
 
@@ -330,5 +330,5 @@ tests/        pytest suite (generator, staging definitions, scripts, license pos
 - Personal developer instance (PDI); it is reclaimed after inactivity, so configuration is kept in this repository.
 - License metrics and prices in the test data are simplified and fictitious; the license position counts installations, not actual use.
 - The standalone Claude API loop in `assistant.py` has not been run; the questions were answered from Claude Code through the same read-only tools.
-- The ITAM Toolkit demo changed Muster AG data (three leaver devices returned or lost, two CI statuses changed and fixed); see [`docs/limitations.md`](docs/limitations.md).
+- The ITAM Toolkit demo changed Muster AG data (the four leavers' devices: three returned, one reported lost; two CI statuses changed and fixed); see [`docs/limitations.md`](docs/limitations.md).
 - All names, serial numbers and addresses are invented. The e-mail domain `muster.example` uses the reserved `.example` TLD.

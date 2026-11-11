@@ -83,6 +83,16 @@
             expect(leaverCase.getValue('hr_contact')).toBe(hr);
             expect(ItamKitConfig.isTrue(leaverCase.lwd_estimated)).toBe(false);
 
+            const due = leaverCase.getValue('due_date');
+            const later = resolver.resolve(leaver, 'manual', {lastWorkingDay: daysAgo(0)});
+            expect(later.status_code).toBe(208);
+            expect(load(CASE, first.data.case_id).getValue('due_date')).not.toBe(due);
+            const task = new GlideRecord('asset_task');
+            task.addQuery('parent', first.data.case_id);
+            task.query();
+            task.next();
+            expect(task.getValue('due_date')).toBe(load(CASE, first.data.case_id).getValue('due_date'));
+
             const second = resolver.resolve(leaver, 'manual');
             expect(second.status_code).toBe(208);
             expect(second.data.case_id).toBe(first.data.case_id);

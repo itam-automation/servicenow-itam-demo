@@ -76,8 +76,7 @@ LeaverAssetResolver.prototype = {
                 leaverCase = this._createCase(user, source, options);
                 created = true;
             } else if (options.lastWorkingDay && leaverCase.getValue('last_working_day') !== options.lastWorkingDay) {
-                leaverCase.setValue('last_working_day', options.lastWorkingDay);
-                leaverCase.setValue('lwd_estimated', false);
+                this._setLastWorkingDay(leaverCase, options.lastWorkingDay, false);
                 leaverCase.update();
             }
 
@@ -111,8 +110,7 @@ LeaverAssetResolver.prototype = {
         }
         const open = this.findOpenCase(userId);
         if (open) {
-            open.setValue('last_working_day', lastWorkingDay);
-            open.setValue('lwd_estimated', false);
+            this._setLastWorkingDay(open, lastWorkingDay, false);
             if (privateEmail) open.setValue('private_email', privateEmail);
             if (!open.getValue('hr_contact')) open.setValue('hr_contact', gs.getUserID());
             open.work_notes = 'HR reported the leaver again; last working day set to ' + lastWorkingDay + '.';
@@ -400,15 +398,29 @@ LeaverAssetResolver.prototype = {
         leaverCase.setValue('trigger_source', source || 'manual');
         leaverCase.setValue('manager', user.getValue('manager'));
         leaverCase.setValue('company', user.getValue('company'));
-        leaverCase.setValue('last_working_day', lastWorkingDay);
-        leaverCase.setValue('lwd_estimated', !reported);
-        const due = new GlideDateTime();
-        due.setDisplayValueInternal(lastWorkingDay + ' 23:59:59');
-        leaverCase.setValue('due_date', due.getValue());
+        this._setLastWorkingDay(leaverCase, lastWorkingDay, !reported);
         if (options.hrContact) leaverCase.setValue('hr_contact', options.hrContact);
         if (options.privateEmail) leaverCase.setValue('private_email', options.privateEmail);
         if (this.assignmentGroup) leaverCase.setValue('assignment_group', this.assignmentGroup);
         leaverCase.setValue('short_description', 'Asset return for leaver ' + user.getDisplayValue());
+    },
+
+    /** Last working day, estimated flag and the due date (end of that day, local time) of the case and its open tasks. */
+    _setLastWorkingDay: function (leaverCase, lastWorkingDay, estimated) {
+        const due = new GlideDateTime();
+        due.setDisplayValueInternal(lastWorkingDay + ' 23:59:59');
+        leaverCase.setValue('last_working_day', lastWorkingDay);
+        leaverCase.setValue('lwd_estimated', estimated);
+        leaverCase.setValue('due_date', due.getValue());
+        if (leaverCase.isNewRecord()) return;
+        const task = new GlideRecord('asset_task');
+        task.addQuery('parent', leaverCase.getUniqueValue());
+        task.addActiveQuery();
+        task.query();
+        while (task.next()) {
+            task.setValue('due_date', due.getValue());
+            task.update();
+        }
     },
 
     _assignedAssets: function (userId) {

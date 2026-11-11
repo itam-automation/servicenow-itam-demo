@@ -80,7 +80,7 @@ Asset return compliance for ServiceNow Core: every leaver gets a case, every dev
 | Events and notifications | `x_371499_itamkit.leaver.reminder`, `….leaver.escalation`; notifications with the open devices (mail script `itamkit_open_returns`) |
 | KPIs | return rate = returned / assets of closed cases; cycle time = calendar days from the last working day to closure; on time = closed by the escalation day; `GET /leaver/kpi` and reports «leaver cases by state», «return outcomes», «leaver cycle time» |
 | Properties | `leaver.reminder_days` (3,7,14), `leaver.asset_query` (which assigned assets count; checked by the query guard), `leaver.assignment_group` |
-| ATF «ITAM Toolkit: leaver asset return» | 73 assertions: three triggers, four end states, idempotency, 204/400/404/409, reminders day 7 and escalation day 14, KPIs, query guard ([script](../toolkit/atf/leaver_asset_return.js)) |
+| ATF «ITAM Toolkit: leaver asset return» | 76 assertions: three triggers, four end states, idempotency, a later HR report moves the due date, 204/400/404/409, reminders day 7 and escalation day 14, KPIs, query guard ([script](../toolkit/atf/leaver_asset_return.js)) |
 
 Evidence for ISO/IEC 27001:2022 control A.5.11 (return of assets): per leaver a case with the list of devices, the outcome per device, timestamps, reminders in the work notes and the KPIs above.
 

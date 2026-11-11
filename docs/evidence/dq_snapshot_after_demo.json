@@ -2,9 +2,9 @@
  "scorecard": {
   "scorecard": "Muster AG",
   "company_name": "Muster AG",
-  "snapshot": "Muster AG 2026-11-11 04:12:46",
-  "created_on": "2026-11-11 12:12:46",
-  "score": 91.11,
+  "snapshot": "Muster AG 2026-11-11 04:40:23",
+  "created_on": "2026-11-11 12:40:23",
+  "score": 91.2,
   "results": [
    {
     "code": "C01",
@@ -82,9 +82,9 @@
     "company_field": "company",
     "status": "ok",
     "weight": 3,
-    "population": 100,
+    "population": 99,
     "defects": 7,
-    "score": 93.0
+    "score": 92.93
    },
    {
     "code": "C06",
@@ -114,9 +114,9 @@
     "company_field": "company",
     "status": "ok",
     "weight": 3,
-    "population": 93,
-    "defects": 1,
-    "score": 98.92
+    "population": 92,
+    "defects": 0,
+    "score": 100.0
    },
    {
     "code": "C08",
@@ -194,7 +194,7 @@
     "company_field": "company",
     "status": "ok",
     "weight": 2,
-    "population": 58,
+    "population": 59,
     "defects": 0,
     "score": 100.0
    },
