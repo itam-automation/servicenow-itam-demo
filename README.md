@@ -15,6 +15,14 @@
 | 4 | Software Asset Management: entitlements, installations, compliance | open (milestone 3) |
 | 5 | AI assistant, technically read-only | open (milestone 3) |
 
+## Demo
+
+Ordering a laptop for a Muster AG employee (MacBook Pro 14 M4), then approval by the asset management group: the flow assigns the in-stock asset MA-000096, sets it to *In use* with assignment date and creates the fulfilment task.
+
+| 1. Order in the Service Catalog | 2. Approval, assigned asset, task |
+|---|---|
+| ![Order](docs/demo/demo_1_laptop_bestellung.gif) | ![Approval and assignment](docs/demo/demo_2_freigabe_zuweisung.gif) |
+
 ## The problem
 
 In IT Asset Management the CMDB is fed by several sources: an inventory export, a network scan, procurement. Each source has its own gaps: duplicates with slightly different names or serial numbers, missing serial numbers, manufacturer spelling variants («DELL», «HP Inc.»), devices still assigned to people who have left. Without a repeatable load process and a measurable quality check, «the CMDB is clean» remains an opinion.
