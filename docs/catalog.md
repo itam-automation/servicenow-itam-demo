@@ -1,6 +1,6 @@
-# ITAM Toolkit 0.1.0: catalog
+# ITAM Toolkit 0.2.0: catalog
 
-> **Kurzfassung:** Scoped App «ITAM Toolkit» (Scope `x_371499_itamkit`) für ServiceNow Core ohne HAM Pro und SAM Pro, gebaut und getestet auf einer persönlichen Entwicklerinstanz (Release Brazil). Fundament mit einheitlichem Ergebnis-Vertrag, Modul 1 «Leaver Asset Return» (Rückgabe der Geräte bei Austritten, Nachweis für ISO 27001 A.5.11), Modul 2 «Asset↔CI Drift & DQ Scorecard». Diese Seite listet jedes Artefakt der App; Grenzen stehen in [`limitations.md`](limitations.md).
+> **Kurzfassung:** Scoped App «ITAM Toolkit» (Scope `x_371499_itamkit`) für ServiceNow Core ohne HAM Pro und SAM Pro, gebaut und getestet auf einer persönlichen Entwicklerinstanz (Release Brazil). Fundament mit einheitlichem Ergebnis-Vertrag, Modul 1 «Leaver Asset Return» (Rückgabe der Geräte bei Austritten, Nachweis für ISO 27001 A.5.11), Modul 2 «Asset↔CI Drift & DQ Scorecard», seit 0.2.0 Modul 3 mit zwei Katalog-Flows (Gerät zurückgeben oder tauschen, Asset-Daten oder Standort ändern). Diese Seite listet jedes Artefakt der App; Grenzen stehen in [`limitations.md`](limitations.md).
 
 Everything below is part of the app's update set and is built from the sources in [`toolkit/`](../toolkit/) by [`toolkit/build_bundle.py`](../toolkit/build_bundle.py). The scope contains the instance's vendor prefix (`x_371499_itamkit`); the scripts never hard-code it, [`ItamKitConfig`](../toolkit/script_includes/ItamKitConfig.js) derives every table, property and event name from the running scope.
 
@@ -124,11 +124,50 @@ Evidence for ISO/IEC 27001:2022 control A.5.11 (return of assets): per leaver a 
 
 C07 links the two modules: a device in use by an inactive user is the leaver backlog; U01 tells whether module 1 can escalate at all.
 
+## Module 3: Catalog request flows (0.2.0)
+
+Sources in [`toolkit/requests/`](../toolkit/requests/), records built by [`build_bundle_requests.py`](../toolkit/requests/build_bundle_requests.py) (55 records); the two flows and the custom action were built in Workflow Studio and are part of the update set `ITAM_Toolkit_0.2.0.xml`.
+
+| Item | What |
+|---|---|
+| Script include [`ItamKitRequests`](../toolkit/requests/ItamKitRequests.js) | `run(step, requestItem)` with the steps `approver`, `start_return`, `complete_return`, `apply_change`, `reject`; returns the output contract; package-private |
+| Action «ITAM Toolkit: run request step» | Flow Designer action with one script step ([script](../toolkit/requests/action_run_request_step.js)); inputs `step`, `request`; outputs `success`, `status_code`, `message`, `approver_user` (reference `sys_user`), `approver_group` (reference `sys_user_group`), `return_task` |
+| Flow «Gerät zurückgeben oder tauschen» | Service Catalog trigger, run as system user: approver → «Ask For Approval» (user or group, approve or reject when anyone answers) → if approved: `start_return`, look up the return task, wait until it is no longer active, `complete_return`; else `reject` |
+| Flow «Asset-Daten oder Standort ändern» | same pattern: approver → «Ask For Approval» → `apply_change` or `reject` |
+| Catalog item «Gerät zurückgeben oder tauschen» | category Hardware, no cart, no quantity; variables: for whom (default: the caller), device (only `alm_hardware` assigned to that person and not retired, in stock or missing), reason (*defekt*, *Tausch*, *nicht mehr benötigt*), remark |
+| Catalog item «Asset-Daten oder Standort ändern» | variables: asset, change type (*Standort*, *Kostenstelle*, *Zuordnung*), new location, new cost center, new assigned user, justification; three catalog UI policies show and require only the field of the chosen type |
+| Property `requests.fallback_group` | name of the group that approves when nobody else is found; on the PDI «Muster AG IT-Asset-Management» |
+| Audit log | module «Catalog request»: `data_change` rows for every field written on an asset or CI, with old value, new value and «RITM number: justification» |
+| ATF «ITAM Toolkit: Gerät zurückgeben oder tauschen» | 29 assertions: item bound to a published flow; the flow asks the manager; defective device: return and replacement task, 208 on repeat, 409 while the task is open, end state *In stock / Pending repair*, assignee cleared, CI per mapping, audit rows, request closed; without manager: fallback group, rejection with reason changes nothing; device of somebody else 409, unknown step 400, unknown request 404 ([script](../toolkit/requests/atf_return.js)) |
+| ATF «ITAM Toolkit: Asset-Daten oder Standort ändern» | 20 assertions: item bound; the flow asks the asset owner; asset, CI and audit rows written, 208 on repeat; head of the department without owner; fallback group, rejection changes nothing; missing new value 400 ([script](../toolkit/requests/atf_change.js)) |
+
+### Asset end state after a return
+
+| Reason | Asset status / substatus | Replacement task |
+|---|---|---|
+| *defekt* | In stock / Pending repair | yes |
+| *Tausch* | In stock / Available | yes |
+| *nicht mehr benötigt* | In stock / Available | no |
+
+The CI status is set from the platform's mapping `alm_asset_ci_state_mapping` (the same mapping module 2 uses), not hard-coded.
+
+### Cross-scope privileges of module 3
+
+| Target | Operations | Why |
+|---|---|---|
+| `sc_req_item` | read, write | requested item of both flows, closed with the result |
+| `sc_cat_item`, `sys_user_group`, `cmn_location`, `cmn_cost_center`, `cmn_department` | read | item of a request, fallback group, new values, head of the department |
+| `sysapproval_approver` | read, write | reason of a rejection; the ATF test approves and rejects |
+| `alm_asset` | write | asset fields of a data change |
+| `sys_hub_flow`, `sys_flow_context`, `item_option_new` | read | ATF only: flow bound and published, waiting flow context, variable definitions |
+| `sc_req_item`, `sc_item_option`, `sc_item_option_mtom`, `cmn_department`, `cmn_location` | create | ATF only: test requests and their data, rolled back after the run |
+
 ## Install on another instance
 
 1. Import `servicenow/update_sets/ITAM_Toolkit_0.1.0.xml` (System Update Sets → Retrieved Update Sets → Import Update Set from XML), preview, commit. The vendor prefix is part of the scope; another instance gets the app under the same scope name.
 2. Run the fix script «ITAM Toolkit: seed generic DQ rules» once (15 rules, scorecard «All companies»).
 3. Assign the roles; optionally set `leaver.assignment_group` and the reminder days; create a scorecard per company.
 4. Run both ATF tests.
+5. For module 3 import `servicenow/update_sets/ITAM_Toolkit_0.2.0.xml` the same way, set `requests.fallback_group` to an existing group with members, and run the two request ATF tests.
 
 For development the app is deployed from the sources: `python3 toolkit/build_bundle.py --out bundle.json` builds 218 records, a small deployer in an admin browser session upserts them through the Table API into the app's scope and update set.

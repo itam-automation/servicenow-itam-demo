@@ -1,4 +1,4 @@
-# ITAM Toolkit 0.1.0: limitations
+# ITAM Toolkit 0.2.0: limitations
 
 > **Kurzfassung:** Was das Toolkit nicht kann, was auf der Entwicklerinstanz nicht ging und was in der Demo simuliert ist. Alles hier ist auf einer persönlichen Entwicklerinstanz (PDI, Release Brazil) mit erfundenen Daten der «Muster AG» entstanden, nicht in einem Kundenprojekt.
 
@@ -38,13 +38,26 @@ Outbound e-mail is switched off on the PDI (`glide.email.smtp.active = false`). 
 - The drift watcher compares the install status only, not the other fields of `alm_asset_ci_field_mapping`.
 - «Drift beheben» fixes one finding at a time; there is no bulk fix on purpose (every fix is previewed and audited).
 
+## Module 3
+
+- **Approvers in the demo.** The Muster AG data has no managers, asset owners or department heads, so all five demo requests were approved or rejected by the fallback group «Muster AG IT-Asset-Management», whose only member on the PDI is the System Administrator. Routing to manager, owner and head of the department is verified by the ATF tests with their own users, not in a demo run.
+- **The replacement task is only created.** Providing the replacement device (a new assignment, for example through «Laptop anfordern») is not part of the flow.
+- **A return task closed incomplete or skipped** ends the wait as well; `complete_return` then answers 409 and the request stays open for a person to decide. There is no timeout on the wait.
+- **The audit log stores reference values as sys_ids** (old and new location, user); the display value is visible on the record and in the request, not in the audit row.
+- **Each ATF run logs «Snapshot Validation failed. User does not have access to Action instance»** (a new instance id every run). The flow still runs in the test and all assertions pass; the cause is not resolved. The test runs the flow in the foreground and stops it after the approval check; the steps after the approval are called directly, so the wait for the return task is covered by the demo runs, not by ATF.
+- **One demo request ran into the approval bug.** RITM0010007 (*Tausch*, MA-000109) was ordered before the fix; its first flow run skipped the approval («no valid approvers»). After the fix the flow was started again for the same request through the Flow API, approved and completed.
+- **Deploying through the Table API** created the three catalog UI policy actions without `ui_policy` and `catalog_variable`; they were completed with a background script. Installing from the update set XML is not affected.
+- No portal widget of its own, no notifications to the requester beyond the platform's standard request notifications (outbound mail is off on the PDI anyway).
+
 ## Demo data
 
 - The demo changed Muster AG data on the PDI: the devices of all four leavers were returned (three) or reported lost (one) through module 1, and two CI statuses were changed by `loader/simulate_drift.py` through the integration user to reproduce an integration update, then fixed with «Drift beheben» (one with the asset leading, one with the CI leading). The «53 of 53» result of `loader/check_data_quality.py` refers to the final run before the toolkit demo; a run today counts the four remediated leaver devices as no longer present.
 - `loader/check_dq_scorecard.py` compares a snapshot with the live CMDB. The baseline report [`dq_scorecard_baseline.md`](dq_scorecard_baseline.md) keeps the result of the run right after the baseline snapshot; [`dq_scorecard.md`](dq_scorecard.md) is the run after the demo.
+- The module 3 demo changed Muster AG data as well: MA-000036 is *In stock / Pending repair* and MA-000109 *In stock / Available*, both without assignee; MA-000003 and its CI are located in «Muster AG Bern»; the replacement tasks AT0010078 and AT0010080 are open. MA-000050 and MA-000189 are unchanged (both requests rejected).
 - The Python check reads the snapshot through the toolkit's REST API, which needs the role `x_371499_itamkit.user`. The integration user does not have it yet (role assignments are done by the instance owner); both checks ran with `--snapshot` from a saved REST answer, the raw records came live from the Table API.
 
 ## Delivery
 
 - No ServiceNow Studio source control: linking needs a GitHub token on the PDI, which the owner decided against. The app is versioned as sources in `toolkit/` plus the update set export.
+- The 0.2.0 update set contains module 3 only and is imported after 0.1.0.
 - The update set export contains the app; the Muster AG scorecard, the demo cases and snapshots are data and not part of it.

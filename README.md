@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/itam-automation/servicenow-itam-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/itam-automation/servicenow-itam-demo/actions/workflows/ci.yml)
 
-> **Kurzfassung:** Portfolio-Projekt zu IT Asset Management auf einer persönlichen ServiceNow-Entwicklerinstanz (Release Brazil). Erfundene Testdaten der «Muster AG» (200 Geräte, 130 Benutzer, zwei Datenquellen) laufen über Import Sets mit Transform Maps in die CMDB. Die Identification and Reconciliation Engine (IRE) führt Dubletten aus dem Netzwerk-Scan zusammen. Reports in ServiceNow und ein Python-Check messen die Datenqualität gegen eine bekannte Wahrheit: **53 von 53 eingebauten Fehlern erkannt** (9 Dubletten von der IRE zusammengeführt, 41 von den Reports auf der CMDB gefunden, 3 von einer Prüfung der Quelldaten beim Import gemeldet, weil die Plattform sie beim Laden stillschweigend bereinigt und die CMDB sie nicht mehr zeigt). Ein Catalog Item «Laptop anfordern» mit Flow, Business Rule und ATF-Test weist Lagergeräte zu. Software Asset Management ohne SAM Pro: 582 Installationen und 8 Lizenzen ergeben in ServiceNow eine Lizenzposition je Produkt, **9 von 9 stimmen mit der bekannten Wahrheit überein**. Fragen an diese Daten laufen über eine Werkzeugschicht, die technisch nur lesen kann; 5 Testfragen stimmen mit der bekannten Wahrheit überein, 2 unzulässige Anfragen wurden abgewiesen. Darauf baut das **ITAM-Toolkit**, eine Scoped App für ServiceNow Core ohne HAM Pro und SAM Pro: Modul 1 sorgt dafür, dass Geräte von Austretenden zurückkommen (Fall je Austritt, Rückgabe-Aufgabe je Gerät, Erinnerungen an Tag 3, 7 und 14, Rückgabequote und Durchlaufzeit als Nachweis für ISO 27001 A.5.11), Modul 2 misst die Datenqualität mit 15 konfigurierbaren Regeln als gewichteten Score und findet Abweichungen zwischen Asset- und CI-Status. Der Score aus ServiceNow stimmt mit der unabhängigen Nachrechnung in Python überein (90.84 und 91.2), die ATF-Tests bestehen (76/76, 45/45). Alle Daten sind erfunden.
+> **Kurzfassung:** Portfolio-Projekt zu IT Asset Management auf einer persönlichen ServiceNow-Entwicklerinstanz (Release Brazil). Erfundene Testdaten der «Muster AG» (200 Geräte, 130 Benutzer, zwei Datenquellen) laufen über Import Sets mit Transform Maps in die CMDB. Die Identification and Reconciliation Engine (IRE) führt Dubletten aus dem Netzwerk-Scan zusammen. Reports in ServiceNow und ein Python-Check messen die Datenqualität gegen eine bekannte Wahrheit: **53 von 53 eingebauten Fehlern erkannt** (9 Dubletten von der IRE zusammengeführt, 41 von den Reports auf der CMDB gefunden, 3 von einer Prüfung der Quelldaten beim Import gemeldet, weil die Plattform sie beim Laden stillschweigend bereinigt und die CMDB sie nicht mehr zeigt). Ein Catalog Item «Laptop anfordern» mit Flow, Business Rule und ATF-Test weist Lagergeräte zu. Software Asset Management ohne SAM Pro: 582 Installationen und 8 Lizenzen ergeben in ServiceNow eine Lizenzposition je Produkt, **9 von 9 stimmen mit der bekannten Wahrheit überein**. Fragen an diese Daten laufen über eine Werkzeugschicht, die technisch nur lesen kann; 5 Testfragen stimmen mit der bekannten Wahrheit überein, 2 unzulässige Anfragen wurden abgewiesen. Darauf baut das **ITAM-Toolkit**, eine Scoped App für ServiceNow Core ohne HAM Pro und SAM Pro: Modul 1 sorgt dafür, dass Geräte von Austretenden zurückkommen (Fall je Austritt, Rückgabe-Aufgabe je Gerät, Erinnerungen an Tag 3, 7 und 14, Rückgabequote und Durchlaufzeit als Nachweis für ISO 27001 A.5.11), Modul 2 misst die Datenqualität mit 15 konfigurierbaren Regeln als gewichteten Score und findet Abweichungen zwischen Asset- und CI-Status. Der Score aus ServiceNow stimmt mit der unabhängigen Nachrechnung in Python überein (90.84 und 91.2), die ATF-Tests bestehen (76/76, 45/45). Seit 0.2.0 kommen zwei Katalog-Flows dazu: Gerät zurückgeben oder tauschen sowie Standort, Kostenstelle oder Zuordnung eines Assets ändern, jeweils mit Freigabe, Audit-Log und ATF-Test (29/29, 20/20). Alle Daten sind erfunden.
 
 ## Status
 
@@ -14,7 +14,7 @@
 | 3 | Catalog item «Laptop anfordern» with Flow Designer, business rule, ATF test | **done** |
 | 4 | Software Asset Management: installations, licenses, license position (compliance) | **done** |
 | 5 | AI assistant, technically read-only | **done**: read-only tool layer with guardrails; 7 test questions answered from Claude Code through it ([`docs/assistant_questions.md`](docs/assistant_questions.md)) |
-| 6 | **ITAM Toolkit** (scoped app for ServiceNow Core): leaver asset return, asset/CI drift and DQ scorecard | **0.1.0**: [catalog](docs/catalog.md), [limitations](docs/limitations.md) |
+| 6 | **ITAM Toolkit** (scoped app for ServiceNow Core): leaver asset return, asset/CI drift and DQ scorecard, catalog request flows | **0.2.0**: [catalog](docs/catalog.md), [limitations](docs/limitations.md) |
 
 ## Demo
 
@@ -247,13 +247,41 @@ If HAM Pro is licensed, its reclamation is the better choice; the toolkit is for
 
 The CMDB success advisor for HAM covers most of module 2 for customers with HAM Pro; module 2 is the configurable, testable equivalent for Core, plus the fix with audit trail.
 
+### Module 3: Catalog request flows (0.2.0)
+
+Two Service Catalog items, each with a Flow Designer flow in the toolkit scope. The flows only orchestrate (approval, wait, branch); every step that reads or writes ITAM data is one call of the custom action «ITAM Toolkit: run request step», which runs [`ItamKitRequests`](toolkit/requests/ItamKitRequests.js) and returns the output contract. The flows run as system user, so the requester needs no rights on assets.
+
+- **«Gerät zurückgeben oder tauschen».** The employee picks one of the devices assigned to them (the reference qualifier offers only those) and a reason: *defekt*, *Tausch*, *nicht mehr benötigt*. Approval by the manager; without a manager by the fallback group (property `requests.fallback_group`). After the approval a return task in `asset_task`, for *defekt* and *Tausch* also a replacement task. When the return task is closed complete, the asset gets the OOTB end state (*In stock / Pending repair* for defective devices, *In stock / Available* otherwise), the assignee is cleared, the CI status follows the OOTB asset/CI mapping, and the audit log records old and new values. A rejection closes the request incomplete with the approver's reason; nothing else changes.
+- **«Asset-Daten oder Standort ändern».** Location, cost center or assigned user of an asset, with a justification; a catalog UI policy shows only the field for the chosen change. Approval by the asset owner (`owned_by`), else the head of the asset's department, else the fallback group. After the approval the new value is written to the asset and its CI, one audit row per record with old value, new value and the justification; a request that changes nothing answers 208. A rejection changes nothing and records the reason.
+
+Runs on the PDI with Muster AG data (the test data has no managers, asset owners or department heads, so every demo approval went to the fallback group; the other approvers are covered by the ATF tests):
+
+| | |
+|---|---|
+| Return, *defekt* (portal, MA-000036) | approved 31 s after the order; return and replacement task created; return task closed: *In stock / Pending repair*, assignee cleared, CI *Pending repair*, 3 audit rows; request closed 81 s after the order |
+| Return, *nicht mehr benötigt* (MA-000050) | rejected; request *Closed Incomplete* after 22 s, asset unchanged, no audit row, reason in the work notes |
+| Return, *Tausch* (MA-000109) | the first run skipped the approval (bug, see findings); restarted after the fix, approved, return task closed: *In stock / Available*, 3 audit rows |
+| Location change (portal, MA-000003, Zürich → Bern) | approved; location of asset and CI set to «Muster AG Bern», 2 audit rows with old and new value and the justification; request closed 28 s after the order |
+| Reassignment (MA-000189) | rejected; request *Closed Incomplete* after 20 s, asset unchanged, no audit row |
+| ATF tests | «Gerät zurückgeben oder tauschen» 29 of 29, «Asset-Daten oder Standort ändern» 20 of 20 assertions passed (happy path and rejection each) |
+
+The times are demo times with the approver at the screen, not process times.
+
+| Return of a defective device: portal order, approval, return task, asset in stock for repair | Location change: portal order with the UI policy, approval, asset and CI, audit log |
+|---|---|
+| ![Return demo](docs/demo/demo_5_device_return.gif) | ![Change demo](docs/demo/demo_6_asset_change.gif) |
+
+| Flow «Gerät zurückgeben oder tauschen» | Flow «Asset-Daten oder Standort ändern» |
+|---|---|
+| ![Return flow](docs/screenshots/17_toolkit_flow_device_return.jpg) | ![Change flow](docs/screenshots/18_toolkit_flow_asset_change.jpg) |
+
 ### Demo
 
 | 1. HR reports a leaver the sweep had already found: the open case is updated, not duplicated; the device comes back and the case closes | 2. Drift fixed with the asset leading and with the CI leading |
 |---|---|
 | ![Leaver demo](docs/demo/demo_3_leaver_return.gif) | ![Drift demo](docs/demo/demo_4_drift_fix.gif) |
 
-Install: import [`servicenow/update_sets/ITAM_Toolkit_0.1.0.xml`](servicenow/update_sets/ITAM_Toolkit_0.1.0.xml), run the fix script «ITAM Toolkit: seed generic DQ rules», assign the roles, run the two ATF tests (details in the catalog). ATF result on the PDI:
+Install: import [`servicenow/update_sets/ITAM_Toolkit_0.1.0.xml`](servicenow/update_sets/ITAM_Toolkit_0.1.0.xml), run the fix script «ITAM Toolkit: seed generic DQ rules», assign the roles, run the two ATF tests (details in the catalog). For module 3 import [`servicenow/update_sets/ITAM_Toolkit_0.2.0.xml`](servicenow/update_sets/ITAM_Toolkit_0.2.0.xml) afterwards, set the property `requests.fallback_group` to the name of the approving group and run the two request ATF tests. ATF result of 0.1.0 on the PDI:
 
 ![ATF passed](docs/screenshots/16_toolkit_atf_passed.jpg)
 
@@ -277,6 +305,10 @@ Things the run made visible, each verified on the instance:
 - **A CI status written by an integration does not reach the asset.** The platform syncs the asset status to the CI, not back. The ITAM Toolkit therefore compares both against the platform's own status mapping; on the PDI's demo data (not Muster AG) 120 of 1,091 assets drift.
 - **Runtime access tracking «Enforcing» gates Glide APIs too**, one by one (`GlideRecord.setValue`, `.insert`, `.update`, `Glide API: properties`, `ScopedGlideElement`), and a denied aggregate call returned a wrong count without an error. The toolkit runs in «Tracking» with all privileges declared; details in [`docs/limitations.md`](docs/limitations.md).
 - **Numbers from server-side JavaScript need care**: Rhino stores `20` as «20.0» in a string field, and a Scripted REST API that returns an object sends `5.0`; `String(...)` and `JSON.stringify` avoid both.
+- **A record pill reaches an action's script step as a GlideRecord**, even when the action input is a string: `String(inputs.request)` gave «[object GlideRecord]», the step answered 404 and the approval had nobody to ask. The action now reads `getUniqueValue()` when it gets a record.
+- **«Ask For Approval» needs typed pills.** The rule stores users and groups separately (`ApprovesAnyU[…]G[…]`); a group sys_id coming from a string output was not resolved as a group, and the flow log said «Skipped due to no valid approvers». With the action outputs typed as references to `sys_user` and `sys_user_group` the same rule asks the group.
+- **A flow run in the foreground stops at an approval with an exception** («The current execution is in the waiting state»), not with a result. The approval records exist at that point; the ATF helper catches it and looks up the waiting flow context.
+- **The Table API stored catalog UI policy actions without policy and variable.** The three records were created, but `ui_policy` and `catalog_variable` stayed empty, so the portal showed every field and none was mandatory. Set with a background script; the update set holds the final records.
 
 ## Quickstart
 
