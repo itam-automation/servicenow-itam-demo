@@ -3,9 +3,9 @@
 
 The bundle is a JSON list of records (table, match, values). A small deployer in the
 admin's browser session upserts them through the Table API into the app's scope and
-update set (see docs/toolkit_deploy.md). Placeholders resolved by the deployer:
+update set (see toolkit/deploy_in_browser.js). Placeholders resolved by the deployer:
 
-    {{P}}                    scope name x_<prefix>_itamkit (never written to the repo)
+    {{P}}                    scope name x_<prefix>_itamkit (the sources never hard-code it)
     {{APP}}                  sys_id of the app
     {{ref:key}}              sys_id of a record created earlier in the same bundle
     {{lookup:table:query}}   sys_id of the first record matching an encoded query

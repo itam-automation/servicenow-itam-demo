@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/itam-automation/servicenow-itam-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/itam-automation/servicenow-itam-demo/actions/workflows/ci.yml)
 
-> **Kurzfassung:** Portfolio-Projekt zu IT Asset Management auf einer persönlichen ServiceNow-Entwicklerinstanz (Release Brazil). Erfundene Testdaten der «Muster AG» (200 Geräte, 130 Benutzer, zwei Datenquellen) laufen über Import Sets mit Transform Maps in die CMDB. Die Identification and Reconciliation Engine (IRE) führt Dubletten aus dem Netzwerk-Scan zusammen. Reports in ServiceNow und ein Python-Check messen die Datenqualität gegen eine bekannte Wahrheit: **53 von 53 eingebauten Fehlern erkannt** (9 Dubletten von der IRE zusammengeführt, 41 von den Reports auf der CMDB gefunden, 3 von einer Prüfung der Quelldaten beim Import gemeldet, weil die Plattform sie beim Laden stillschweigend bereinigt und die CMDB sie nicht mehr zeigt). Ein Catalog Item «Laptop anfordern» mit Flow, Business Rule und ATF-Test weist Lagergeräte zu. Software Asset Management ohne SAM Pro: 582 Installationen und 8 Lizenzen ergeben in ServiceNow eine Lizenzposition je Produkt, **9 von 9 stimmen mit der bekannten Wahrheit überein**. Fragen an diese Daten laufen über eine Werkzeugschicht, die technisch nur lesen kann; 5 Testfragen stimmen mit der bekannten Wahrheit überein, 2 unzulässige Anfragen wurden abgewiesen. Darauf baut das **ITAM-Toolkit**, eine Scoped App für ServiceNow Core ohne HAM Pro und SAM Pro: Modul 1 sorgt dafür, dass Geräte von Austretenden zurückkommen (Fall je Austritt, Rückgabe-Aufgabe je Gerät, Erinnerungen an Tag 3, 7 und 14, Rückgabequote und Durchlaufzeit als Nachweis für ISO 27001 A.5.11), Modul 2 misst die Datenqualität mit 15 konfigurierbaren Regeln als gewichteten Score und findet Abweichungen zwischen Asset- und CI-Status. Der Score aus ServiceNow stimmt mit der unabhängigen Nachrechnung in Python überein (90.84 und 91.2), die ATF-Tests bestehen (76/76, 45/45). Seit 0.2.0 kommen zwei Katalog-Flows dazu: Gerät zurückgeben oder tauschen sowie Standort, Kostenstelle oder Zuordnung eines Assets ändern, jeweils mit Freigabe, Audit-Log und ATF-Test (29/29, 20/20). Alle Daten sind erfunden.
+> **Kurzfassung:** Portfolio-Projekt zu IT Asset Management auf einer persönlichen ServiceNow-Entwicklerinstanz (Release Brazil). Erfundene Testdaten der «Muster AG» (200 Geräte, 130 Benutzer, zwei Datenquellen) laufen über Import Sets mit Transform Maps in die CMDB. Die Identification and Reconciliation Engine (IRE) führt Dubletten aus dem Netzwerk-Scan zusammen. Reports in ServiceNow und ein Python-Check messen die Datenqualität gegen eine bekannte Wahrheit: **53 von 53 eingebauten Fehlern erkannt** (9 Dubletten von der IRE zusammengeführt, 41 zeigen Prüfregeln und Reports im Bestand (die 13 Herstellervarianten zählt die Toolkit-Regel C04 direkt in ServiceNow), 3 von einer Prüfung der Quelldaten beim Import gemeldet, weil die Plattform sie beim Laden stillschweigend bereinigt und die CMDB sie nicht mehr zeigt). Ein Catalog Item «Laptop anfordern» mit Flow, Business Rule und ATF-Test weist Lagergeräte zu. Software Asset Management ohne SAM Pro: Aus 582 Installationen und 8 Lizenzen berechnet ServiceNow die Lizenzbilanz für 9 Produkte; **alle 9 stimmen mit dem erwarteten Ergebnis der Testdaten überein**. Fragen an diese Daten laufen über eine Werkzeugschicht, die technisch nur lesen kann; 5 Testfragen stimmen mit der bekannten Wahrheit überein, 2 unzulässige Anfragen wurden abgewiesen. Darauf baut das **ITAM-Toolkit**, eine Scoped App für ServiceNow Core ohne HAM Pro und SAM Pro: Modul 1 sorgt dafür, dass Geräte von Austretenden zurückkommen (Fall je Austritt, Rückgabe-Aufgabe je Gerät, Erinnerungen an Tag 3, 7 und 14, Rückgabequote und Durchlaufzeit als Nachweis für ISO 27001 A.5.11), Modul 2 misst die Datenqualität mit 15 konfigurierbaren Regeln als gewichteten Score und findet Abweichungen zwischen Asset- und CI-Status. Der Score aus ServiceNow stimmt mit der unabhängigen Nachrechnung in Python überein (90.84 und 91.2), die ATF-Tests bestehen (76/76, 45/45). Seit 0.2.0 kommen zwei Katalog-Flows dazu: Gerät zurückgeben oder tauschen sowie Standort, Kostenstelle oder Zuordnung eines Assets ändern, jeweils mit Freigabe, Audit-Log und ATF-Test (29/29, 20/20). Alle Daten sind erfunden.
 
 ## Status
 
@@ -69,7 +69,7 @@ The loader uses a dedicated integration user (`svc_itam_loader`, machine identit
 
 Final run on 11 Nov 2026, starting from an instance without any Muster AG data (reset with `loader/reset_testdata.py`: selection by creator, counted and backed up first, all counts 0 afterwards, totals down by exactly 197 assets and 203 CIs):
 
-**53 of 53 injected data quality issues detected**: 9 scan duplicates merged by the IRE, 41 issues found by the reports on the CMDB, 3 reported by the import check on the source data. None went undetected. Per-issue details: [`docs/data_quality.md`](docs/data_quality.md).
+**53 of 53 injected data quality issues detected**: 9 scan duplicates merged by the IRE, 41 shown on the CMDB by check rules and reports (the 13 manufacturer variants are counted directly in ServiceNow by toolkit rule C04), 3 reported by the import check on the source data. None went undetected. Per-issue details: [`docs/data_quality.md`](docs/data_quality.md).
 
 The last 3 are the ones the platform corrects silently on load, so the CMDB cannot show them any more: a laptop without a location in the inventory export (ServiceNow takes the location over from the assigned user) and two devices with the manufacturer «LENOVO» (the database matches «Lenovo» regardless of case). In the previous run they counted as «resolved by the platform», not as detected. Now the onBefore transform script checks every row before it goes to the IRE and writes its findings into the import set row (column `u_dq_findings`, report «ITAM DQ 8»), with two general rules that do not know the injected issues:
 
@@ -85,7 +85,7 @@ On their own, these two rules flag 21 of the 21 injected issues of the two types
 | IRE, inventory export | 200 CIs created |
 | IRE, network scan | 12 rows: 9 merged into existing CIs (6 via serial number + MAC, 3 via name + MAC), 3 created as separate CIs because name and MAC contradict the matching serial number; all 3 are listed by report «ITAM DQ 7» |
 | CMDB | 203 CIs of Muster AG; 197 hardware assets created automatically from them (the 6 firewalls have no asset class), with the lifecycle status of their CI thanks to the business rule (136 in use, 45 retired, 11 in stock, 5 in maintenance), no fix script needed |
-| License position | 9 of 9 products equal to the ground truth ([`docs/license_position.md`](docs/license_position.md)) |
+| License position | 9 of 9 products equal to the expected result of the test data ([`docs/license_position.md`](docs/license_position.md)) |
 | KPIs (in use) | warranty ending in 2027: 22, warranty expired: 56, still on Windows 10: 3; all equal to the ground truth |
 
 | Import sets of the final run | Transform maps |
@@ -123,14 +123,14 @@ Software Asset Management Professional (SAM Pro) is not active on a developer in
 | Step | Table | Result |
 |---|---|---|
 | Software catalog (normalized products) | `cmdb_software_product_model` | 22 models, license type from the platform (*Per named user*, *Per workstation*, empty for free software) |
-| Raw names and versions, as an inventory tool reports them | `cmdb_ci_spkg` | 27 packages, each linked to its model (`model_id`): the normalization step SAM Pro would do |
+| Raw names and versions, as an inventory tool reports them | `cmdb_ci_spkg` | 27 packages recorded, 26 of them installed, each linked to its model (`model_id`): the normalization step SAM Pro would do |
 | Installations on Muster AG devices | `cmdb_software_instance` | 582 |
 | Licenses (purchased rights, cost, subscription end) | `alm_license` | 8 |
 | License position per product | `u_itam_license_position` | 9 products, recalculated after every license import (onComplete script) and daily (scheduled job) |
 
 All of it is loaded through Import Sets (three more staging tables and transform maps); the field maps call the script include `MusterSamImport`, and a rerun changes nothing (coalesce). The script include **`ItamLicensePosition`** counts usage per license type (*Per workstation*: devices with an installation; *Per named user*: distinct users of those devices, a device without a user counts once) and compares it with the rights.
 
-**Result: 9 of 9 license positions match the ground truth**, both as calculated by ServiceNow and as recalculated by `loader/check_license_position.py` from the raw data ([`docs/license_position.md`](docs/license_position.md)):
+**Result: from 582 installations and 8 licenses ServiceNow calculates the license position of 9 products; all 9 match the expected result of the test data**, both as calculated by ServiceNow and as recalculated by `loader/check_license_position.py` from the raw data ([`docs/license_position.md`](docs/license_position.md)):
 
 | Status | Products |
 |---|---|
@@ -192,7 +192,7 @@ Demo on the PDI with the four Muster AG leavers: HR reported Simon Steiner eight
 | Return rate | 75 % (3 of 4 devices returned: 2 to stock, 1 to repair; 1 reported lost) |
 | Cycle time | 3.0 days on average, 8 days at most (the late report); 100 % closed by day 14 |
 | Reminder | 1 (day 7), `sys_email` record in the outbox, type *send-ready*, to the HR contact and the private address |
-| ATF test | 76 of 76 assertions passed |
+| ATF test | 76 of 76 assertions passed ([test log](docs/screenshots/19_toolkit_atf_leaver_log.jpg)) |
 
 | Leaver case after the return | Return task with the four outcomes | Reminder as e-mail record (body hidden in the screenshot: it contains the instance link) |
 |---|---|---|
@@ -227,7 +227,7 @@ If HAM Pro is licensed, its reclamation is the better choice; the toolkit is for
 | Biggest gap | U01: **126 of 126** active users have no manager, so escalations in module 1 cannot reach anybody in this data |
 | Drift demo | an integration user changed the status of two CIs (`loader/simulate_drift.py`); the platform did not pass it on to the assets; 2 findings, fixed once with the asset leading and once with the CI leading, 2 audit rows |
 | Trend on the demo day | 90.84 → 91.11 (three leaver cases closed) → 91.00 (drift) → 91.11 (drift fixed) → 91.20 (last leaver case closed); the final snapshot recomputed in Python: 91.20, 15 of 15 rules equal ([report](docs/dq_scorecard.md)) |
-| ATF test | 45 of 45 assertions passed |
+| ATF test | 45 of 45 assertions passed ([test log](docs/screenshots/20_toolkit_atf_drift_log.jpg)) |
 
 | Rule table | Snapshot with one result per rule | «Drift beheben» with the preview of the chosen side |
 |---|---|---|
@@ -263,7 +263,7 @@ Runs on the PDI with Muster AG data (the test data has no managers, asset owners
 | Return, *Tausch* (MA-000109) | the first run skipped the approval (bug, see findings); restarted after the fix, approved, return task closed: *In stock / Available*, 3 audit rows |
 | Location change (portal, MA-000003, Zürich → Bern) | approved; location of asset and CI set to «Muster AG Bern», 2 audit rows with old and new value and the justification; request closed 28 s after the order |
 | Reassignment (MA-000189) | rejected; request *Closed Incomplete* after 20 s, asset unchanged, no audit row |
-| ATF tests | «Gerät zurückgeben oder tauschen» 29 of 29, «Asset-Daten oder Standort ändern» 20 of 20 assertions passed (happy path and rejection each) |
+| ATF tests | «Gerät zurückgeben oder tauschen» 29 of 29 ([test log](docs/screenshots/21_toolkit_atf_device_return_log.jpg)), «Asset-Daten oder Standort ändern» 20 of 20 ([test log](docs/screenshots/22_toolkit_atf_asset_change_log.jpg)) assertions passed (happy path and rejection each) |
 
 The times are demo times with the approver at the screen, not process times.
 
@@ -281,9 +281,17 @@ The times are demo times with the approver at the screen, not process times.
 |---|---|
 | ![Leaver demo](docs/demo/demo_3_leaver_return.gif) | ![Drift demo](docs/demo/demo_4_drift_fix.gif) |
 
-Install: import [`servicenow/update_sets/ITAM_Toolkit_0.1.0.xml`](servicenow/update_sets/ITAM_Toolkit_0.1.0.xml), run the fix script «ITAM Toolkit: seed generic DQ rules», assign the roles, run the two ATF tests (details in the catalog). For module 3 import [`servicenow/update_sets/ITAM_Toolkit_0.2.0.xml`](servicenow/update_sets/ITAM_Toolkit_0.2.0.xml) afterwards, set the property `requests.fallback_group` to the name of the approving group and run the two request ATF tests. ATF result of 0.1.0 on the PDI:
+Install: import [`servicenow/update_sets/ITAM_Toolkit_0.1.0.xml`](servicenow/update_sets/ITAM_Toolkit_0.1.0.xml), run the fix script «ITAM Toolkit: seed generic DQ rules», assign the roles, run the two ATF tests (details in the catalog). For module 3 import [`servicenow/update_sets/ITAM_Toolkit_0.2.0.xml`](servicenow/update_sets/ITAM_Toolkit_0.2.0.xml) afterwards, set the property `requests.fallback_group` to the name of the approving group and run the two request ATF tests.
 
-![ATF passed](docs/screenshots/16_toolkit_atf_passed.jpg)
+ATF results on the PDI, all four toolkit tests run again on 11 Nov 2026 after the 0.2.0 release (end of each test log):
+
+| Leaver asset return: 76 of 76 | Asset/CI drift and DQ scorecard: 45 of 45 |
+|---|---|
+| ![Leaver test log](docs/screenshots/19_toolkit_atf_leaver_log.jpg) | ![Drift test log](docs/screenshots/20_toolkit_atf_drift_log.jpg) |
+
+| Gerät zurückgeben oder tauschen: 29 of 29 | Asset-Daten oder Standort ändern: 20 of 20 |
+|---|---|
+| ![Return test log](docs/screenshots/21_toolkit_atf_device_return_log.jpg) | ![Change test log](docs/screenshots/22_toolkit_atf_asset_change_log.jpg) |
 
 ## Findings on the platform
 
@@ -361,6 +369,7 @@ tests/        pytest suite (generator, staging definitions, scripts, license pos
 
 - Personal developer instance (PDI); it is reclaimed after inactivity, so configuration is kept in this repository.
 - License metrics and prices in the test data are simplified and fictitious; the license position counts installations, not actual use.
+- No test user has two computers, so counting *Per named user* (distinct users) never differs from counting devices in this data; that part of `ItamLicensePosition` is not discriminated by the test data.
 - The standalone Claude API loop in `assistant.py` has not been run; the questions were answered from Claude Code through the same read-only tools.
 - The ITAM Toolkit demo changed Muster AG data (the four leavers' devices: three returned, one reported lost; two CI statuses changed and fixed); see [`docs/limitations.md`](docs/limitations.md).
 - All names, serial numbers and addresses are invented. The e-mail domain `muster.example` uses the reserved `.example` TLD.
