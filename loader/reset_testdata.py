@@ -13,9 +13,9 @@ Sicherheitsregeln:
   loader/output/reset_backup_*.json). Mit --execute wird nur gelöscht, wenn jede
   Zahl der Erwartung entspricht; danach müssen die Gesamtzahlen von alm_hardware
   und cmdb_ci_hardware um genau die gesicherten Mengen gesunken sein.
-- Assets und IRE-Quellenschlüssel darf der Loader nicht löschen (Rollen asset
-  bzw. admin). Diese löscht admin vorher mit derselben Auswahl; das Skript
-  prüft, dass die Assets weg sind.
+- Assets, IRE-Quellenschlüssel, Lizenzen und die Lizenzposition darf der
+  Loader nicht löschen (Rollen asset, admin, sam). Diese löscht admin vorher
+  mit derselben Auswahl; das Skript prüft, dass die Assets weg sind.
 - Nie gelöscht: Integrationsbenutzer, admin, Konfiguration (Datenquellen,
   Transform Maps, Abgleichsregeln, Reports).
 
@@ -43,12 +43,17 @@ PROTECTED_USERS = ("admin",)
 TARGETS = [
     ("Assets (über CI-Herkunft)", "alm_hardware", 197, "lineage", "admin"),
     ("IRE-Quellenschlüssel", "sys_object_source", 212, "creator", "admin"),
+    ("Lizenzposition", "u_itam_license_position", 9, "creator", "admin"),
+    ("Lizenzen", "alm_license", 8, "creator", "admin"),
+    ("Installationen", "cmdb_software_instance", 582, "creator", "loader"),
+    ("Softwarepakete", "cmdb_ci_spkg", 27, "creator", "loader"),
+    ("Softwaremodelle", "cmdb_software_product_model", 22, "creator", "loader"),
     ("CIs", "cmdb_ci_hardware", 203, "creator", "loader"),
     ("Benutzer", "sys_user", 130, "creator", "loader"),
-    ("Modelle", "cmdb_hardware_product_model", 35, "creator", "loader"),
+    ("Modelle", "cmdb_hardware_product_model", 36, "creator", "loader"),
     ("Abteilungen", "cmn_department", 9, "creator", "loader"),
     ("Standorte", "cmn_location", 5, "creator", "loader"),
-    ("Firma und neu angelegte Hersteller", "core_company", 9, "creator", "loader"),
+    ("Firma und neu angelegte Hersteller", "core_company", 20, "creator", "loader"),
 ]
 TOTALS = {"alm_hardware": "Assets (über CI-Herkunft)", "cmdb_ci_hardware": "CIs"}
 

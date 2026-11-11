@@ -9,6 +9,9 @@ zugehörige Transform Map an (Definitionen in loader/staging.py):
 2. Geräte: zuerst der Inventar-Export, dann der Netzwerk-Scan. Das
    Transformskript übergibt jede Zeile an die IRE; sie entscheidet anhand der
    Hardware Rule, ob ein Gerät neu ist oder schon existiert.
+3. Software (SAM): Softwaremodelle mit Softwarepaketen je Version,
+   Installationen auf den Geräten, Lizenzen. Nach dem Lizenzimport berechnet
+   ServiceNow die Lizenzposition neu (Script Include «ItamLicensePosition»).
 
 Das Ergebnis jedes Laufs steht in loader/output/last_run.json und wird gegen
 testdata/output/ground_truth.json abgeglichen.
@@ -16,6 +19,7 @@ testdata/output/ground_truth.json abgeglichen.
 Aufruf aus dem Projektordner:
     python3 loader/load_testdata.py                    # alles
     python3 loader/load_testdata.py --step masterdata  # nur Stammdaten
+    python3 loader/load_testdata.py --step sam         # nur Software, Installationen, Lizenzen
     python3 loader/load_testdata.py --limit 3          # je Datei/Quelle nur 3 Zeilen
 """
 
@@ -33,7 +37,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from sn_client import SNClient, SNError  # noqa: E402
-from staging import BY_KEY, Staging, parse_staging_row, payload, read_fields  # noqa: E402
+from staging import BY_KEY, SAM, Staging, parse_staging_row, payload, read_fields  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "testdata" / "output"
@@ -127,7 +131,7 @@ def write_run_report(results: list[dict], duplicates: list[str]) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Lädt die Testdaten der Muster AG über Import Sets in die PDI.")
-    parser.add_argument("--step", choices=("all", "masterdata", "devices"), default="all")
+    parser.add_argument("--step", choices=("all", "masterdata", "devices", "sam"), default="all")
     parser.add_argument("--source", choices=("all", "inventory", "scan"), default="all",
                         help="nur eine Gerätequelle (Scan erst nach dem Inventar, sonst entstehen Dubletten)")
     parser.add_argument("--limit", type=int, default=None, help="höchstens so viele Zeilen je Datei bzw. Quelle")
@@ -162,6 +166,14 @@ def main(argv: list[str] | None = None) -> int:
         if comparison:
             print("  Dubletten aus dem Netzwerk-Scan:")
             print("\n".join(comparison))
+
+    if args.step in ("all", "sam"):
+        for key in SAM:
+            staging = BY_KEY[key]
+            rows = read_csv(key, args.data_dir)[:args.limit]
+            _, res = import_rows(client, staging, rows, f"{staging.table} -> {staging.target}")
+            results += res
+            print("    " + ", ".join(f"{n} {s}" for s, n in Counter(r["status"] for r in res).items()))
 
     errors = [r for r in results if r["status"] == "error" or "Fehler:" in r.get("message", "")]
     missing = [r for r in results if r.get("ire_missing")]

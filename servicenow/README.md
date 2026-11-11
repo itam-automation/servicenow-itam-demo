@@ -22,6 +22,20 @@ Milestone 2, captured in the update set **«ITAM Demo - Meilenstein 2 Laptop-Anf
 | ATF test «ITAM: Lifecycle-Status Hardware-Asset» | `sys_atf_test`, `sys_atf_step` | [`atf_lifecycle_test.js`](atf_lifecycle_test.js); test execution enabled via `sn_atf.runner.enabled` |
 | Group «Muster AG IT-Asset-Management» | `sys_user_group` (data, not in the update set) | approver and assignment group; member: admin |
 
+Milestone 3 (software asset management), captured in the update set **«ITAM Demo - Meilenstein 3 SAM»**:
+
+| Item | Table | Details |
+|---|---|---|
+| Script include «MusterSamImport» | `sys_script_include` | [`sam_import_utils.js`](sam_import_utils.js): lookups for the field maps (manufacturer, license type, software model, package, device) |
+| Script include «ItamLicensePosition» | `sys_script_include` | [`license_position.js`](license_position.js): license position per software model |
+| Staging tables | `sys_db_object` | `u_muster_software_imp`, `u_muster_installation_imp`, `u_muster_license_imp` |
+| Transform maps | `sys_transform_map` | software -> `cmdb_software_product_model` (onAfter [`software_transform_onafter.js`](software_transform_onafter.js) creates the packages); installations -> `cmdb_software_instance` (coalesce on package and device, onBefore [`installation_transform_onbefore.js`](installation_transform_onbefore.js)); licenses -> `alm_license` (onComplete [`license_transform_oncomplete.js`](license_transform_oncomplete.js) recalculates the position) |
+| Table «ITAM Lizenzposition» | `u_itam_license_position` | company, software model, publisher, license type, rights, usage, difference, status; list layout |
+| Scheduled job «ITAM: Lizenzposition berechnen» | `sysauto_script` | daily, `new ItamLicensePosition('Muster AG').store()` |
+| Reports | `sys_report` | «ITAM SAM 1 - Lizenzposition Muster AG» (list), «ITAM SAM 2 - Produkte nach Lizenzstatus» (bar) |
+| Scripted REST API «ITAM Demo» | `sys_ws_definition`, `sys_ws_operation` | `GET /license_position`, [`rest_license_position.js`](rest_license_position.js); requires authentication and the default REST ACL; the base path contains the instance's namespace and is configured in `.env` (`SN_ITAM_API`) |
+| Column types of the staging tables | `sys_dictionary` | set to `string` by name (they had been created with the type's sys_id) |
+
 The staging tables and transform maps are generated from one definition, [`loader/staging.py`](../loader/staging.py) (`python3 loader/staging.py` prints the full specification including the scripts).
 
 ## Update sets as XML

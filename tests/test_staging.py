@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -17,6 +18,7 @@ from staging import (  # noqa: E402
     DEVICE_COLUMNS,
     KEY_COLUMN,
     SCRIPT_DIR,
+    SCRIPT_INCLUDES,
     STAGING,
     parse_staging_row,
     payload,
@@ -60,10 +62,27 @@ class Definitions(unittest.TestCase):
 
     def test_referenced_scripts_exist(self):
         for s in STAGING:
-            for name in [f.source_script for f in s.fields if f.source_script] + [s.onbefore_script]:
-                if name:
-                    self.assertTrue((SCRIPT_DIR / name).exists(), name)
-        self.assertIn("IdentificationEngine", spec()["staging"][-1]["onbefore_script"])
+            names = [f.source_script for f in s.fields] + [s.onbefore_script, s.onafter_script, s.oncomplete_script]
+            for name in filter(None, names):
+                self.assertTrue((SCRIPT_DIR / name).exists(), name)
+        devices = next(item for item in spec()["staging"] if item["key"] == "devices")
+        self.assertIn("IdentificationEngine", devices["onbefore_script"])
+
+    def test_inline_scripts_call_existing_functions(self):
+        """Die Feldzuordnungen der SAM-Maps rufen nur Funktionen auf, die das Script Include hat."""
+        utils = (SCRIPT_DIR / SCRIPT_INCLUDES["MusterSamImport"]).read_text(encoding="utf-8")
+        calls = [f.source_code for s in STAGING for f in s.fields if "MusterSamImport" in f.source_code]
+        self.assertGreaterEqual(len(calls), 6)
+        for code in calls:
+            function = re.search(r"new MusterSamImport\(\)\.(\w+)\(", code).group(1)
+            self.assertIn(f"    {function}: function", utils, function)
+            for column in re.findall(r"getValue\('u_(\w+)'\)", code):
+                self.assertIn(column, next(s for s in STAGING if any(f.source_code == code for f in s.fields)).columns)
+
+    def test_script_includes_define_their_class(self):
+        for name, file in SCRIPT_INCLUDES.items():
+            self.assertIn(f"var {name} = Class.create();", (SCRIPT_DIR / file).read_text(encoding="utf-8"))
+        self.assertEqual(set(spec()["script_includes"]), set(SCRIPT_INCLUDES))
 
     def test_device_columns_match_generator(self):
         self.assertEqual(list(DEVICE_COLUMNS), list(DATA["devices"][0].keys()))
