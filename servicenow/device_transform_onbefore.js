@@ -8,9 +8,11 @@
  * - Referenzen (Firma, Hersteller, Modell, Benutzer, Standort, Abteilung)
  *   werden hier aufgelöst. Fehlende Hersteller werden so angelegt, wie die
  *   Quelle sie liefert (Schreibvarianten bleiben sichtbar für den Report).
- * - Seriennummern werden normalisiert (Leerzeichen weg, Grossbuchstaben).
- *   Ohne diesen Schritt hat die IRE Schreibvarianten nicht als Dublette
- *   erkannt (erster Lauf: 9 von 12 Scan-Dubletten zusammengeführt).
+ * - Seriennummern werden normalisiert (Leerzeichen weg, Grossbuchstaben),
+ *   damit dasselbe Gerät überall dieselbe Seriennummer trägt. Die IRE führt
+ *   eine Dublette trotzdem nicht zusammen, wenn zur passenden Seriennummer
+ *   Name und MAC-Adresse widersprechen (Endlauf: 9 von 12 zusammengeführt);
+ *   diese Fälle findet der Report «ITAM DQ 7».
  * - Das Ergebnis der IRE steht in den Spalten u_ire_* der Staging-Zeile und
  *   im Kommentar der Zeile; daraus liest der Loader den Lauf zurück.
  */

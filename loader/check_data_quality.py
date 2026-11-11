@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 """Datenqualitäts-Check der CMDB gegen die bekannte Wahrheit (ground_truth.json).
 
-Liest die CIs der Muster AG über REST (nur lesend), wendet die Prüfregeln an
-und vergleicht das Ergebnis mit den Fehlern, die der Generator eingebaut hat.
-Abweichungen werden erklärt, nicht versteckt. Ergebnis als Markdown in
-docs/datenqualitaet.md.
+Liest die CIs der Muster AG und die Ergebnisse der IRE aus der Staging-Tabelle
+über REST (nur lesend). Für jeden Fehler, den der Generator eingebaut hat, wird
+festgestellt, wodurch er erkannt wurde:
+
+- IRE: Dublette aus dem Netzwerk-Scan auf das vorhandene CI zusammengeführt
+- Report: eine der Prüfregeln (gleiche Regeln wie die Reports «ITAM DQ» in ServiceNow)
+- Plattform: beim Laden von ServiceNow selbst bereinigt (z. B. Standort vom Benutzer übernommen)
+- nicht erkannt
+
+Ergebnis als Markdown in docs/data_quality.md, Kennzahl «X von Y erkannt».
 
 Aufruf aus dem Projektordner:
     python3 loader/check_data_quality.py
@@ -12,9 +18,9 @@ Aufruf aus dem Projektordner:
 
 from __future__ import annotations
 
-import csv
 import json
 import sys
+from collections import Counter
 from datetime import date
 from pathlib import Path
 
@@ -23,33 +29,37 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "testdata"))
 
 from generate_testdata import MODELS  # noqa: E402
 from sn_client import SNClient  # noqa: E402
+from staging import BY_KEY  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "testdata" / "output"
-REPORT = ROOT / "docs" / "datenqualitaet.md"
+REPORT = ROOT / "docs" / "data_quality.md"
 
 IN_USE = ("1", "3")  # Installed, In Maintenance
 RETIRED = "7"
 ENDPOINT_CLASSES = ("cmdb_ci_computer", "cmdb_ci_hardware")  # Laptops/Desktops, Smartphones (exakte Klasse)
 CANONICAL_MANUFACTURERS = {m.manufacturer for m in MODELS}
+DUPLICATE_TYPES = ("duplicate_same_serial", "duplicate_serial_variant", "duplicate_same_name_no_serial")
 
-RULES = [
-    # Schlüssel in ground_truth, Titel
-    ("missing_serial_number", "Seriennummer fehlt"),
-    ("missing_location", "Standort fehlt"),
-    ("manufacturer_name_variant", "Herstellername nicht in Normschreibweise"),
-    ("installed_without_user", "Endgerät in Betrieb ohne Benutzer"),
-    ("retired_with_user", "Ausgemustert, aber noch zugewiesen"),
-    ("assigned_to_inactive_user", "In Betrieb bei inaktivem Benutzer"),
-    ("duplicates", "Dubletten (gleiche Seriennummer nach Normalisierung)"),
-]
+ISSUE_LABELS = {
+    "missing_serial_number": "Missing serial number",
+    "missing_location": "Missing location",
+    "manufacturer_name_variant": "Manufacturer name variant (e.g. «DELL»)",
+    "installed_without_user": "Endpoint in use without assigned user",
+    "retired_with_user": "Retired endpoint still assigned",
+    "assigned_to_inactive_user": "In use by an inactive user (leaver)",
+    "duplicate_same_serial": "Duplicate from scan: same serial, FQDN name",
+    "duplicate_serial_variant": "Duplicate from scan: serial in other spelling, other MAC",
+    "duplicate_same_name_no_serial": "Duplicate from scan: same name, no serial",
+}
+DETECTED_BY = ("IRE", "Report", "Platform", "not detected")
 
 
 def normalize_serial(serial: str) -> str:
-    return serial.strip().upper()
+    return "".join(serial.split()).upper()
 
 
-def fetch(client: SNClient) -> tuple[list[dict], dict[str, str]]:
+def fetch(client: SNClient) -> tuple[list[dict], dict[str, str], dict[str, str]]:
     fields = ",".join([
         "name", "serial_number", "asset_tag", "sys_class_name", "install_status", "discovery_source",
         "warranty_expiration", "manufacturer.name", "location.name", "assigned_to.user_name", "assigned_to.active",
@@ -58,12 +68,16 @@ def fetch(client: SNClient) -> tuple[list[dict], dict[str, str]]:
     cis = client.get_records("cmdb_ci_hardware", "company.name=Muster AG", fields)
     computers = client.get_records("cmdb_ci_computer", "company.name=Muster AG", "name,os")
     os_by_name = {c["name"]: c["os"] for c in computers}
-    return cis, os_by_name
+    # Neueste Staging-Zeile je Quell-ID: welches CI hat die IRE dafür geschrieben oder gefunden?
+    staged = client.get_records(BY_KEY["devices"].table, "ORDERBYsys_created_on", "u_source_id,u_ire_ci")
+    ire_ci = {row["u_source_id"]: row["u_ire_ci"] for row in staged}
+    return cis, os_by_name, ire_ci
 
 
 def apply_rules(cis: list[dict]) -> dict[str, set[str]]:
-    """Gibt je Regel die Namen der betroffenen CIs zurück."""
-    found: dict[str, set[str]] = {key: set() for key, _ in RULES}
+    """Prüfregeln (wie die Reports «ITAM DQ 1-7»). Gibt je Regel die Namen der betroffenen CIs zurück."""
+    found: dict[str, set[str]] = {key: set() for key in ISSUE_LABELS if key not in DUPLICATE_TYPES}
+    found["duplicates"] = set()
     by_serial: dict[str, list[str]] = {}
     for ci in cis:
         name, status = ci["name"], ci["install_status"]
@@ -88,112 +102,119 @@ def apply_rules(cis: list[dict]) -> dict[str, set[str]]:
     return found
 
 
-def expected_sets(ground_truth: dict, devices: list[dict]) -> tuple[dict[str, set[str]], dict[str, str]]:
-    """Erwartete CI-Namen je Regel. Dubletten: das Original und die nicht zusammengeführte Scan-Kopie."""
-    name_of = {d["source_id"]: d["name"] for d in devices}
-    expected: dict[str, set[str]] = {key: set() for key, _ in RULES}
-    details: dict[str, str] = {}
-    for issue in ground_truth["issues"]:
-        details[issue["name"]] = issue["detail"]
-        if issue["type"] in expected:
-            expected[issue["type"]].add(issue["name"])
-        elif issue["type"] == "duplicate_serial_variant":
-            # Nur diese Dublettenart landet als eigene CI; die anderen führt die IRE zusammen.
-            expected["duplicates"].update({issue["name"], name_of[issue["duplicate_of"]]})
-    return expected, details
-
-
-def platform_reason(key: str, ci: dict | None, detail: str) -> str:
+def platform_reason(issue: dict, ci: dict | None) -> str:
     """Bekanntes Plattformverhalten, das einen eingebauten Fehler beim Laden aufgehoben hat."""
     if ci is None:
         return ""
-    if (key == "missing_location" and ci["assigned_to.user_name"]
+    if (issue["type"] == "missing_location" and ci["assigned_to.user_name"]
             and ci["location.name"] == ci["assigned_to.location.name"]):
-        return "Standort vom zugewiesenen Benutzer übernommen"
-    if key == "manufacturer_name_variant" and " statt " in detail:
-        variant, canonical = detail.split(" statt ", 1)
+        return "location taken over from the assigned user"
+    if issue["type"] == "manufacturer_name_variant" and " statt " in issue["detail"]:
+        variant, canonical = issue["detail"].split(" statt ", 1)
         if variant.lower() == canonical.lower():
-            return ("Variante unterscheidet sich nur in Gross-/Kleinschreibung, "
-                    "beim Laden dem vorhandenen Hersteller zugeordnet")
+            return f"«{variant}» differs only in case, matched to existing «{canonical}» on load"
     return ""
 
 
-def explain(key: str, extra: set[str], missing: set[str], scan_inserts: set[str], details: dict[str, str],
-            ci_by_name: dict[str, dict]) -> str:
-    parts = []
-    from_dupes = extra & scan_inserts
-    if from_dupes:
-        parts.append(f"{len(from_dupes)} zusätzlich aus nicht erkannten Scan-Dubletten (dort fehlen diese Angaben)")
-    other_extra = extra - scan_inserts
-    if other_extra:
-        parts.append("unerwartet: " + ", ".join(sorted(other_extra)))
-    for name in sorted(missing):
-        detail = details.get(name, "")
-        reason = platform_reason(key, ci_by_name.get(name), detail)
-        parts.append(f"nicht gefunden: {name} ({detail})" + (f", {reason}" if reason else ", Ursache unklar"))
-    return " · ".join(parts) or "deckungsgleich"
+def classify(ground_truth: dict, cis: list[dict], found: dict[str, set[str]],
+             ire_ci: dict[str, str]) -> list[dict]:
+    """Ordnet jedem eingebauten Fehler zu, wodurch er erkannt wurde."""
+    ci_by_name = {c["name"]: c for c in cis}
+    rows = []
+    for issue in ground_truth["issues"]:
+        kind, name = issue["type"], issue["name"]
+        how, note = "not detected", ""
+        if kind in DUPLICATE_TYPES:
+            dup, orig = ire_ci.get(issue["source_id"]), ire_ci.get(issue["duplicate_of"])
+            if dup and dup == orig:
+                how = "IRE"
+            elif name in found["duplicates"]:
+                how, note = "Report", "separate CI, found by duplicate check"
+        elif name in found[kind]:
+            how = "Report"
+        else:
+            note = platform_reason(issue, ci_by_name.get(name))
+            if note:
+                how = "Platform"
+        rows.append({**issue, "detected_by": how, "note": note})
+    return rows
 
 
 def main() -> int:
     ground_truth = json.loads((DATA_DIR / "ground_truth.json").read_text(encoding="utf-8"))
-    with (DATA_DIR / "devices.csv").open(encoding="utf-8", newline="") as f:
-        devices = list(csv.DictReader(f))
     client = SNClient.from_env()
-    cis, os_by_name = fetch(client)
-
+    cis, os_by_name, ire_ci = fetch(client)
     found = apply_rules(cis)
-    expected, details = expected_sets(ground_truth, devices)
-    scan_inserts = {c["name"] for c in cis if c["discovery_source"] == "MusterNetzScan" and not c["asset_tag"]}
-    ci_by_name = {c["name"]: c for c in cis}
+    rows = classify(ground_truth, cis, found, ire_ci)
+
+    total = len(rows)
+    counts = Counter(r["detected_by"] for r in rows)
+    detected = counts["IRE"] + counts["Report"]
+    expected_names = {r["name"] for r in rows}
+    unexpected = {key: names - expected_names for key, names in found.items() if key != "duplicates"}
+    unexpected = {k: v for k, v in unexpected.items() if v}
 
     in_use = [c for c in cis if c["install_status"] in IN_USE]
     today = ground_truth["parameters"]["reference_date"]
     kpis = [
-        ("Garantieende 2027, in Betrieb", ground_truth["kpis"]["warranty_ends_2027_in_use"],
+        ("Warranty ends in 2027 (in use)", ground_truth["kpis"]["warranty_ends_2027_in_use"],
          sum(c["warranty_expiration"].startswith("2027") for c in in_use)),
-        ("Garantie abgelaufen, in Betrieb", ground_truth["kpis"]["warranty_expired_in_use"],
+        ("Warranty expired (in use)", ground_truth["kpis"]["warranty_expired_in_use"],
          sum(bool(c["warranty_expiration"]) and c["warranty_expiration"] < today for c in in_use)),
-        ("Windows 10, in Betrieb", ground_truth["kpis"]["windows10_in_use"],
+        ("Windows 10 (in use)", ground_truth["kpis"]["windows10_in_use"],
          sum(os_by_name.get(c["name"], "").startswith("Windows 10") for c in in_use)),
     ]
 
+    headline = (f"**{detected} of {total} injected data quality issues detected** "
+                f"({counts['IRE']} merged by the IRE, {counts['Report']} found by the reports); "
+                f"{counts['Platform']} were already resolved by the platform on load, "
+                f"{counts['not detected']} not detected.")
     lines = [
-        "# Datenqualität der CMDB",
+        "# Data quality: measured against the ground truth",
         "",
-        f"Stand {date.today().isoformat()}, persönliche Entwicklerinstanz (PDI), {len(cis)} CIs der Muster AG "
-        f"(davon {len(scan_inserts)} nur aus dem Netzwerk-Scan, ohne Inventardatensatz).",
+        f"Generated {date.today().isoformat()} by `python3 loader/check_data_quality.py` against the personal "
+        f"developer instance: {len(cis)} CIs of Muster AG. The test data generator injected {total} issues on "
+        "purpose (`testdata/output/ground_truth.json`); this check classifies how each one was caught.",
         "",
-        "Vergleich der Prüfregeln mit den Fehlern, die der Testdaten-Generator bewusst eingebaut hat "
-        "(`testdata/output/ground_truth.json`). Erzeugt mit `python3 loader/check_data_quality.py`.",
+        headline,
         "",
-        "| Prüfregel | erwartet | gefunden | Erklärung |",
-        "|---|---:|---:|---|",
+        "| Issue type | injected | IRE | Report | Platform | not detected |",
+        "|---|---:|---:|---:|---:|---:|",
     ]
-    print(f"{len(cis)} CIs der Muster AG, davon {len(scan_inserts)} nur aus dem Scan")
-    all_ok = True
-    for key, title in RULES:
-        extra = found[key] - expected[key]
-        missing = expected[key] - found[key]
-        note = explain(key, extra, missing, scan_inserts, details, ci_by_name)
-        all_ok &= not (extra - scan_inserts) and "Ursache unklar" not in note
-        lines.append(f"| {title} | {len(expected[key])} | {len(found[key])} | {note} |")
-        print(f"  {title:<52} erwartet {len(expected[key]):3d}  gefunden {len(found[key]):3d}  {note}")
-    lines += ["", "| Kennzahl | erwartet | in ServiceNow |", "|---|---:|---:|"]
-    for title, exp, got in kpis:
-        lines.append(f"| {title} | {exp} | {got} |")
-        print(f"  {title:<52} erwartet {exp:3d}  gefunden {got:3d}")
-    if found["duplicates"]:
-        lines += ["", "Dubletten-Gruppen (gleiche Seriennummer nach Grossschreibung und ohne Leerzeichen):", ""]
-        groups: dict[str, list[str]] = {}
-        for c in cis:
-            if c["name"] in found["duplicates"]:
-                groups.setdefault(normalize_serial(c["serial_number"]), []).append(c["name"])
-        lines += [f"- {' / '.join(sorted(names))}" for names in groups.values()]
+    by_type: dict[str, Counter] = {}
+    for r in rows:
+        by_type.setdefault(r["type"], Counter())[r["detected_by"]] += 1
+    for kind, label in ISSUE_LABELS.items():
+        c = by_type.get(kind, Counter())
+        lines.append(f"| {label} | {sum(c.values())} | " + " | ".join(str(c[d]) for d in DETECTED_BY) + " |")
+    notes = [r for r in rows if r["detected_by"] in ("Platform", "not detected") or r["note"]]
+    if notes:
+        lines += ["", "Details:", ""]
+        lines += [f"- {r['name']} ({ISSUE_LABELS[r['type']]}): {r['detected_by']}"
+                  + (f", {r['note']}" if r["note"] else "") for r in notes]
+    if unexpected:
+        lines += ["", "Additional findings not injected by the generator:", ""]
+        lines += [f"- {ISSUE_LABELS[k]}: {', '.join(sorted(v))}" for k, v in unexpected.items()]
+    lines += ["", "| KPI | expected | in ServiceNow |", "|---|---:|---:|"]
+    lines += [f"| {title} | {exp} | {got} |" for title, exp, got in kpis]
 
     REPORT.parent.mkdir(exist_ok=True)
     REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    print(f"{len(cis)} CIs der Muster AG")
+    print(f"  {detected} von {total} eingebauten Fehlern erkannt (IRE {counts['IRE']}, Reports {counts['Report']}), "
+          f"{counts['Platform']} beim Laden von der Plattform bereinigt, {counts['not detected']} nicht erkannt")
+    for kind, label in ISSUE_LABELS.items():
+        c = by_type.get(kind, Counter())
+        print(f"    {label:<58} " + ", ".join(f"{d} {c[d]}" for d in DETECTED_BY if c[d]))
+    for r in notes:
+        print(f"    Hinweis: {r['name']}: {r['detected_by']} {r['note']}")
+    for k, v in unexpected.items():
+        print(f"    Zusätzlich gefunden ({k}): {', '.join(sorted(v))}")
+    for title, exp, got in kpis:
+        print(f"  {title:<40} erwartet {exp:3d}  gefunden {got:3d}")
     print(f"Bericht: {REPORT.relative_to(ROOT)}")
-    return 0 if all_ok else 1
+    return 0 if counts["not detected"] == 0 and all(exp == got for _, exp, got in kpis) else 1
 
 
 if __name__ == "__main__":
