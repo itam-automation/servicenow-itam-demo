@@ -1,0 +1,131 @@
+"""Tests für die Staging-Definitionen und die Transformskripte (ohne Netzwerk)."""
+
+from __future__ import annotations
+
+import csv
+import sys
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "loader"))
+sys.path.insert(0, str(ROOT / "testdata"))
+
+import generate_testdata as gen  # noqa: E402
+from staging import (  # noqa: E402
+    BY_KEY,
+    DEVICE_COLUMNS,
+    KEY_COLUMN,
+    SCRIPT_DIR,
+    STAGING,
+    parse_staging_row,
+    payload,
+    read_fields,
+    spec,
+)
+
+DATA = gen.generate()
+
+
+def csv_header(key: str) -> list[str]:
+    with (ROOT / "testdata" / "output" / f"{key}.csv").open(encoding="utf-8", newline="") as f:
+        return next(csv.reader(f))
+
+
+class Definitions(unittest.TestCase):
+    def test_columns_match_csv_files(self):
+        """Jede CSV-Spalte landet in der Staging-Tabelle, keine fehlt, keine ist zu viel."""
+        for s in STAGING:
+            self.assertEqual(list(s.columns), csv_header(s.key), s.key)
+
+    def test_field_maps_use_staging_columns(self):
+        for s in STAGING:
+            for f in s.fields:
+                self.assertIn(f.source, s.columns, f"{s.key}: {f.source}")
+                self.assertIn(f.choice_action, ("create", "ignore", "reject"))
+
+    def test_master_data_has_coalesce_on_key(self):
+        """Ohne Coalesce würde jeder Lauf Dubletten der Stammdaten erzeugen."""
+        for s in STAGING:
+            if s.key == "devices":
+                continue
+            coalesce = [f.source for f in s.fields if f.coalesce]
+            self.assertIn(KEY_COLUMN[s.key], coalesce, s.key)
+
+    def test_names_fit_servicenow_limits(self):
+        for s in STAGING:
+            self.assertTrue(s.table.startswith("u_") and len(s.table) <= 80, s.table)
+            for column in (*s.columns, *s.result_columns):
+                self.assertLessEqual(len(f"u_{column}"), 40, column)
+
+    def test_referenced_scripts_exist(self):
+        for s in STAGING:
+            for name in [f.source_script for f in s.fields if f.source_script] + [s.onbefore_script]:
+                if name:
+                    self.assertTrue((SCRIPT_DIR / name).exists(), name)
+        self.assertIn("IdentificationEngine", spec()["staging"][-1]["onbefore_script"])
+
+    def test_device_columns_match_generator(self):
+        self.assertEqual(list(DEVICE_COLUMNS), list(DATA["devices"][0].keys()))
+
+
+class DeviceScript(unittest.TestCase):
+    """Die IRE-Logik liegt im Transformskript; diese Tests prüfen den Abgleich mit den Testdaten."""
+
+    SCRIPT = (SCRIPT_DIR / BY_KEY["devices"].onbefore_script).read_text(encoding="utf-8")
+
+    def test_data_sources_cover_generator_sources(self):
+        for source in (gen.SOURCE_INVENTORY, gen.SOURCE_SCAN):
+            self.assertIn(f"'{source}'", self.SCRIPT)
+        for data_source in ("MusterInventar", "MusterNetzScan"):
+            self.assertIn(f"'{data_source}'", self.SCRIPT)
+
+    def test_status_values_cover_generated_statuses(self):
+        for status in {d["install_status"] for d in DATA["devices"]}:
+            self.assertIn(f"'{status}'", self.SCRIPT)
+
+    def test_serial_numbers_are_normalized(self):
+        self.assertIn(".replace(/\\s+/g, '').toUpperCase()", self.SCRIPT)
+
+    def test_result_columns_are_written(self):
+        for column in BY_KEY["devices"].result_columns:
+            self.assertIn(f"'u_{column}'", self.SCRIPT)
+
+    def test_serial_variants_normalize_to_original(self):
+        """Gleiche Regel wie im Skript: Die Schreibvarianten aus der ground_truth werden wieder zum Original."""
+        by_id = {d["source_id"]: d for d in DATA["devices"]}
+        variants = [i for i in DATA["ground_truth"]["issues"] if i["type"] == "duplicate_serial_variant"]
+        self.assertTrue(variants)
+        for issue in variants:
+            variant = by_id[issue["source_id"]]["serial_number"]
+            original = by_id[issue["duplicate_of"]]["serial_number"]
+            self.assertNotEqual(variant, original)
+            self.assertEqual("".join(variant.split()).upper(), original)
+
+
+class Payload(unittest.TestCase):
+    def test_payload_without_prefix_and_as_text(self):
+        """insertMultiple ordnet über den Spaltennamen ohne u_ zu."""
+        row = DATA["devices"][0]
+        data = payload(row, BY_KEY["devices"])
+        self.assertEqual(set(data), set(DEVICE_COLUMNS))
+        self.assertTrue(all(isinstance(v, str) for v in data.values()))
+        self.assertEqual(data["ram"], str(row["ram"]))
+
+    def test_read_fields_and_parse(self):
+        devices = BY_KEY["devices"]
+        self.assertIn("u_ire_ci", read_fields(devices).split(","))
+        parsed = parse_staging_row({
+            "u_source_id": "INV-00001", "sys_import_state": "ignored", "sys_target_sys_id": "",
+            "sys_import_state_comment": "IRE INSERT abc", "u_ire_operation": "INSERT", "u_ire_ci": "abc",
+            "u_ire_match": "", "u_ire_missing": "",
+        }, devices)
+        self.assertEqual(parsed["key"], "INV-00001")
+        self.assertEqual(parsed["ire_operation"], "INSERT")
+        self.assertEqual(parsed["ire_ci"], "abc")
+        users = parse_staging_row({"u_user_name": "anna.meier", "sys_import_state": "inserted"}, BY_KEY["users"])
+        self.assertEqual((users["key"], users["status"]), ("anna.meier", "inserted"))
+
+
+if __name__ == "__main__":
+    unittest.main()
