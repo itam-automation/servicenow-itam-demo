@@ -99,6 +99,13 @@ class SNClient:
     def create(self, table: str, values: dict) -> dict:
         return self.request("POST", f"/api/now/table/{table}", {"sysparm_exclude_reference_link": "true"}, values)["result"]
 
+    def delete(self, table: str, sys_id: str) -> None:
+        self.request("DELETE", f"/api/now/table/{table}/{sys_id}")
+
+    def count(self, table: str, query: str = "") -> int:
+        result = self.request("GET", f"/api/now/stats/{table}", {"sysparm_count": "true", "sysparm_query": query})
+        return int(result["result"]["stats"]["count"])
+
     def update(self, table: str, sys_id: str, values: dict) -> dict:
         return self.request("PATCH", f"/api/now/table/{table}/{sys_id}",
                             {"sysparm_exclude_reference_link": "true"}, values)["result"]

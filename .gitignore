@@ -16,3 +16,6 @@ __pycache__/
 
 # Laufergebnisse des Loaders
 loader/output/
+
+# Interne Planung der Bewerbung, nicht ins Repo
+docs/ZIELBILD_BEWERBUNG.md

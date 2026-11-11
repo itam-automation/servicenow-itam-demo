@@ -148,6 +148,7 @@ Geprüft am 11.11.2026 auf der eigenen PDI, Release Brazil (Patch 1, Hotfix 1), 
 - **Klassen:** Computer, Windows-/Linux-Server, Drucker, IP Switch und IP Firewall sind vorhanden. Eine Klasse für Smartphones fehlt; `cmdb_ci_comm` hätte keine IRE-Regel. Smartphones laufen deshalb als `cmdb_ci_hardware`.
 - **IRE:** Für alle Hardware-Klassen gilt die «Hardware Rule». Reihenfolge: product_instance_id, Seriennummer mit Typ, Seriennummer, Name, MAC und Name (Netzwerkadapter), IP und MAC, MAC, IP.
 - **REST-Rechte:** Der Endpunkt `/now/identifyreconcile` verlangt eine der Rollen `asset`, `itil` oder `sn_cmdb_editor`.
+- **Assets aus CIs:** ServiceNow legt zu jedem neuen CI automatisch ein Asset (`alm_hardware`) an, asynchron über den Job «Asset – Create asset delayed sync» (alle 15 Minuten). Massgeblich ist die Modellkategorie mit Asset-Klasse. Die 6 Firewalls (`cmdb_ci_ip_firewall`) haben keine solche Kategorie, deshalb entstehen aus 203 CIs 197 Assets. Umgekehrt löscht ServiceNow beim Löschen eines Assets das zugehörige CI mit.
 - **Asset Management:** Hardware Asset Management (sn_hamp) ist nicht installiert, wie in der Community beschrieben. Software Asset Management ist noch nicht aktiv (Tabelle `cmdb_sam_sw_install` fehlt). Die Aktivierung wird in Baustein 4 geprüft.
 
 Weitere Grenzen:
