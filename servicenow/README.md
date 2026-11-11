@@ -40,11 +40,14 @@ The staging tables and transform maps are generated from one definition, [`loade
 
 ## Update sets as XML
 
-Both update sets are exported in [`update_sets/`](update_sets/):
+All three update sets are exported in [`update_sets/`](update_sets/):
 
 | File | Content |
 |---|---|
 | `ITAM_Demo_Baustein2_CMDB-Import.xml` | 152 customer updates: data sources, reconciliation rule, 5 staging tables with columns, 5 transform maps with field maps and scripts, 10 reports |
 | `ITAM_Demo_Meilenstein2_Laptop-Anforderung.xml` | 15 customer updates: catalog item with variables, flow, business rule, fix script, ATF test, ATF property |
+| `ITAM_Demo_Meilenstein3_SAM.xml` | 143 customer updates: 2 script includes, 3 staging tables and transform maps with scripts, table «ITAM Lizenzposition» with list layout, scheduled job, 2 reports, Scripted REST API, column type fix for the staging tables |
 
-To install on another instance: *System Update Sets → Retrieved Update Sets → Import Update Set from XML*, then *Preview* and *Commit* (first Baustein 2, then Meilenstein 2). The group «Muster AG IT-Asset-Management» is data and has to be created separately.
+To install on another instance: *System Update Sets → Retrieved Update Sets → Import Update Set from XML*, then *Preview* and *Commit* (Baustein 2, Meilenstein 2, Meilenstein 3 in this order). The group «Muster AG IT-Asset-Management» is data and has to be created separately.
+
+Two things to know about Meilenstein 3: scheduled jobs (`sysauto_script`) are not captured by update sets on this release (`update_synch=false`), so the job was added explicitly with `GlideUpdateManager2().saveRecord()`. The Scripted REST API carries the namespace of the source instance in its base path; after importing, check the path and set `SN_ITAM_API` in `.env` accordingly.
