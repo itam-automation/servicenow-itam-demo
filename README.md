@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/itam-automation/servicenow-itam-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/itam-automation/servicenow-itam-demo/actions/workflows/ci.yml)
 
-> **Kurzfassung:** Portfolio-Projekt zu IT Asset Management auf einer persönlichen ServiceNow-Entwicklerinstanz (Release Brazil). Erfundene Testdaten der «Muster AG» (200 Geräte, 130 Benutzer, zwei Datenquellen) laufen über Import Sets mit Transform Maps in die CMDB. Die Identification and Reconciliation Engine (IRE) führt Dubletten aus dem Netzwerk-Scan zusammen. Reports in ServiceNow und ein Python-Check messen die Datenqualität gegen eine bekannte Wahrheit: **50 von 53 eingebauten Fehlern erkannt** (9 Dubletten von der IRE zusammengeführt, 41 von den Reports gefunden); die übrigen 3 hat die Plattform schon beim Laden bereinigt, unerkannt blieb keiner. Ein Catalog Item «Laptop anfordern» mit Flow, Business Rule und ATF-Test weist Lagergeräte zu. Software Asset Management ohne SAM Pro: 582 Installationen und 8 Lizenzen ergeben in ServiceNow eine Lizenzposition je Produkt, **9 von 9 stimmen mit der bekannten Wahrheit überein**. Ein KI-Assistent beantwortet Fragen zu diesen Daten und kann technisch nur lesen. Alle Daten sind erfunden.
+> **Kurzfassung:** Portfolio-Projekt zu IT Asset Management auf einer persönlichen ServiceNow-Entwicklerinstanz (Release Brazil). Erfundene Testdaten der «Muster AG» (200 Geräte, 130 Benutzer, zwei Datenquellen) laufen über Import Sets mit Transform Maps in die CMDB. Die Identification and Reconciliation Engine (IRE) führt Dubletten aus dem Netzwerk-Scan zusammen. Reports in ServiceNow und ein Python-Check messen die Datenqualität gegen eine bekannte Wahrheit: **50 von 53 eingebauten Fehlern erkannt** (9 Dubletten von der IRE zusammengeführt, 41 von den Reports gefunden); die übrigen 3 hat die Plattform schon beim Laden bereinigt, unerkannt blieb keiner. Ein Catalog Item «Laptop anfordern» mit Flow, Business Rule und ATF-Test weist Lagergeräte zu. Software Asset Management ohne SAM Pro: 582 Installationen und 8 Lizenzen ergeben in ServiceNow eine Lizenzposition je Produkt, **9 von 9 stimmen mit der bekannten Wahrheit überein**. Fragen an diese Daten laufen über eine Werkzeugschicht, die technisch nur lesen kann; 5 Testfragen stimmen mit der bekannten Wahrheit überein, 2 unzulässige Anfragen wurden abgewiesen. Alle Daten sind erfunden.
 
 ## Status
 
@@ -13,7 +13,7 @@
 | 2 | CMDB load via Import Sets and Transform Maps, duplicate handling via IRE, data quality reports | **done** |
 | 3 | Catalog item «Laptop anfordern» with Flow Designer, business rule, ATF test | **done** |
 | 4 | Software Asset Management: installations, licenses, license position (compliance) | **done** |
-| 5 | AI assistant, technically read-only | **tool layer done** and tested against the instance; answers by the model need an API key (not run yet) |
+| 5 | AI assistant, technically read-only | **done**: read-only tool layer with guardrails; 7 test questions answered from Claude Code through it ([`docs/assistant_questions.md`](docs/assistant_questions.md)) |
 
 ## Demo
 
@@ -38,7 +38,7 @@ In IT Asset Management the CMDB is fed by several sources: an inventory export, 
 | 5 | Reset the instance safely (select by creator, count first, verify totals) | `loader/reset_testdata.py` |
 | 6 | Request a laptop in the **Service Catalog**: approval by the asset management group, an in-stock device of the requested model is assigned, a fulfilment task is created (or a procurement task if nothing is in stock); a **business rule** keeps the asset lifecycle consistent; an **ATF test** checks it | Flow Designer, `servicenow/business_rule_asset_lifecycle.js`, `servicenow/atf_lifecycle_test.js` |
 | 7 | **Software asset management** without SAM Pro: software models and packages (normalization), installations, licenses; a script include calculates the **license position** per product, a check compares it with the ground truth | `servicenow/license_position.js`, `loader/check_license_position.py` |
-| 8 | **AI assistant** that answers questions about this data with Claude and three tools that can only read | `assistant/` |
+| 8 | **AI assistant**: Claude answers questions about this data through three tools that can only read | `assistant/` |
 
 ## Architecture
 
@@ -144,12 +144,17 @@ Reports «ITAM SAM 1» (license position) and «ITAM SAM 2» (products by licens
 - **Limits**: at most 100 rows per query, 10 tool calls and 8 model turns per question; every tool call is logged locally (`assistant/output/audit.jsonl`).
 - The system prompt treats tool results as data, not instructions, and asks for answers backed by tool results only.
 
-Tested without a model: 13 unit tests for the guardrails (`tests/test_assistant.py`), and the tools run against the instance (`--check-access`, `--tool ...`). Answers by the model need an `ANTHROPIC_API_KEY`; that run is still open. In operation the assistant uses its own read-only user (`SN_READONLY_USER`); for tests it can use the integration user with `--use-loader-user` and stays GET-only.
+Tested in two ways: 13 unit tests for the guardrails (`tests/test_assistant.py`), and 7 questions answered against the instance from Claude Code, which chose the tools and wrote the answers ([`docs/assistant_questions.md`](docs/assistant_questions.md)). All 5 factual answers match the ground truth (license position, laptops in stock, expired warranties, Windows 10, retired devices with a user); the request for e-mail addresses and an attempt to leave the company scope were refused before anything was sent. The tools ran with the integration user (`--use-loader-user`) and stayed GET-only; in operation they would use a read-only user (`SN_READONLY_USER`).
+
+`assistant.py` also contains a loop for the Claude API (`claude-opus-5-5`, tool limits, audit log) for running the assistant on its own. It was not needed here and has not been run.
 
 ```bash
 python3 assistant/assistant.py --check-access --use-loader-user
 python3 assistant/assistant.py --use-loader-user --tool get_license_position
-python3 assistant/assistant.py "Wo sind wir unterlizenziert?"   # needs ANTHROPIC_API_KEY and anthropic (requirements-assistant.txt)
+python3 assistant/assistant.py --use-loader-user --tool count_records \
+  '{"table": "cmdb_ci_hardware", "query": "install_statusIN1,3^warranty_expiration<2026-11-11", "group_by": null}'
+# optional, standalone with the Claude API (ANTHROPIC_API_KEY, requirements-assistant.txt):
+python3 assistant/assistant.py "Wo sind wir unterlizenziert?"
 ```
 
 ## Findings on the platform
@@ -218,5 +223,5 @@ tests/        pytest suite (generator, staging definitions, scripts, license pos
 
 - Personal developer instance (PDI); it is reclaimed after inactivity, so configuration is kept in this repository.
 - License metrics and prices in the test data are simplified and fictitious; the license position counts installations, not actual use.
-- The AI assistant has not answered a question with the model yet (no API key in this project so far); its tools and guardrails are tested.
+- The standalone Claude API loop in `assistant.py` has not been run; the questions were answered from Claude Code through the same read-only tools.
 - All names, serial numbers and addresses are invented. The e-mail domain `muster.example` uses the reserved `.example` TLD.
