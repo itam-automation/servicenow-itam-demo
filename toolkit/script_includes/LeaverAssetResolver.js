@@ -402,7 +402,9 @@ LeaverAssetResolver.prototype = {
         leaverCase.setValue('company', user.getValue('company'));
         leaverCase.setValue('last_working_day', lastWorkingDay);
         leaverCase.setValue('lwd_estimated', !reported);
-        leaverCase.setValue('due_date', lastWorkingDay + ' 23:59:59');
+        const due = new GlideDateTime();
+        due.setDisplayValueInternal(lastWorkingDay + ' 23:59:59');
+        leaverCase.setValue('due_date', due.getValue());
         if (options.hrContact) leaverCase.setValue('hr_contact', options.hrContact);
         if (options.privateEmail) leaverCase.setValue('private_email', options.privateEmail);
         if (this.assignmentGroup) leaverCase.setValue('assignment_group', this.assignmentGroup);
