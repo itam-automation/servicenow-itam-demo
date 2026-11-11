@@ -1,6 +1,6 @@
 /**
  * UI action «Drift beheben» (fix drift) on <scope>_drift_finding, form button, client + server.
- * Client: the leading side must be chosen; the preview of exactly that side is confirmed.
+ * Client: the leading side must be chosen; the preview of exactly that side is confirmed in a GlideModal.
  * Server: AssetCiDrift.fix() changes the other side and writes the toolkit audit log.
  */
 function itamkitFixDrift() {
@@ -10,11 +10,17 @@ function itamkitFixDrift() {
         return false;
     }
     const preview = g_form.getValue(side === 'asset' ? 'preview_asset_leads' : 'preview_ci_leads');
-    if (!confirm('Fix drift (' + (side === 'asset' ? 'asset leads' : 'CI leads') + ')?\n\n' + preview +
-        '\n\nThe change is written to the ITAM Toolkit audit log.')) {
-        return false;
-    }
-    gsftSubmit(null, g_form.getFormElement(), 'itamkit_fix_drift');
+    const submit = function () {
+        gsftSubmit(null, g_form.getFormElement(), 'itamkit_fix_drift');
+    };
+    // In-page confirmation (GlideModal) with the preview of exactly the chosen side
+    const dialog = new GlideModal('glide_confirm_standard');
+    dialog.setTitle('Drift beheben: ' + (side === 'asset' ? 'asset leads' : 'CI leads'));
+    dialog.setPreference('title', preview + '. The change is written to the ITAM Toolkit audit log.');
+    dialog.setPreference('warning', 'true');
+    dialog.setPreference('onPromptComplete', submit);
+    dialog.render();
+    return false;
 }
 
 if (typeof window == 'undefined') {

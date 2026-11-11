@@ -157,44 +157,54 @@ TABLES = [
         [
             ("short_description", "Finding", "string", {"max_length": "255", "display": "true"}),
             ("state", "State", "choice", {"max_length": "40", "choice": "3", "default_value": "open"}),
-            ("asset", "Asset", "reference", {"reference": "alm_hardware"}),
-            ("ci", "Configuration item", "reference", {"reference": "cmdb_ci"}),
-            ("company", "Company", "reference", {"reference": "core_company"}),
+            ("asset", "Asset", "reference", {"reference": "alm_hardware", "read_only": "true"}),
+            ("ci", "Configuration item", "reference", {"reference": "cmdb_ci", "read_only": "true"}),
+            ("company", "Company", "reference", {"reference": "core_company", "read_only": "true"}),
             (
                 "asset_state",
                 "Asset status",
                 "choice",
-                {"max_length": "40", "choice_table": "alm_asset", "choice_field": "install_status"},
+                {
+                    "max_length": "40",
+                    "choice_table": "alm_asset",
+                    "choice_field": "install_status",
+                    "read_only": "true",
+                },
             ),
             (
                 "asset_substate",
                 "Asset substatus",
                 "choice",
-                {"max_length": "40", "choice_table": "alm_asset", "choice_field": "substatus"},
+                {"max_length": "40", "choice_table": "alm_asset", "choice_field": "substatus", "read_only": "true"},
             ),
             (
                 "ci_status",
                 "CI status",
                 "choice",
-                {"max_length": "40", "choice_table": "cmdb_ci", "choice_field": "install_status"},
+                {"max_length": "40", "choice_table": "cmdb_ci", "choice_field": "install_status", "read_only": "true"},
             ),
             (
                 "expected_ci_status",
                 "Expected CI status (OOTB mapping)",
                 "choice",
-                {"max_length": "40", "choice_table": "cmdb_ci", "choice_field": "install_status"},
+                {"max_length": "40", "choice_table": "cmdb_ci", "choice_field": "install_status", "read_only": "true"},
             ),
             (
                 "proposed_asset_state",
                 "Asset status if the CI leads",
                 "choice",
-                {"max_length": "40", "choice_table": "alm_asset", "choice_field": "install_status"},
+                {
+                    "max_length": "40",
+                    "choice_table": "alm_asset",
+                    "choice_field": "install_status",
+                    "read_only": "true",
+                },
             ),
             (
                 "proposed_asset_substate",
                 "Asset substatus if the CI leads",
                 "choice",
-                {"max_length": "40", "choice_table": "alm_asset", "choice_field": "substatus"},
+                {"max_length": "40", "choice_table": "alm_asset", "choice_field": "substatus", "read_only": "true"},
             ),
             ("preview_asset_leads", "Preview: asset leads", "string", {"max_length": "400", "read_only": "true"}),
             ("preview_ci_leads", "Preview: CI leads", "string", {"max_length": "400", "read_only": "true"}),
@@ -289,6 +299,16 @@ PROPERTIES = [
     ("leaver.assignment_group", "", "sys_id of the group that gets the leaver cases and return tasks (optional)."),
 ]
 
+# Glide APIs the platform also gates under runtime access tracking «Enforcing» (verified: without them
+# the ATF tests fail with CrossScopeAccessNotAllowedException).
+API_PRIVILEGES = [
+    ("GlideRecord.setValue", "set field values on any GlideRecord"),
+    ("GlideRecord.insert", "insert records (cases, tasks, findings, snapshots)"),
+    ("GlideRecord.update", "update records (case counters, asset end state, CI status, findings)"),
+    ("ScopedGlideElement", "assign journal fields (work notes) and other element values"),
+    ("Glide API: properties", "gs.getProperty for the toolkit properties"),
+]
+
 SCRIPT_INCLUDES = [
     ("ItamKitResult", "Output contract {success, status_code, message, data} of every building block"),
     ("ItamKitConfig", "Names of tables, properties, events and roles, derived from the running scope"),
@@ -319,6 +339,268 @@ PRIVILEGES = [
     ("alm_hardware", "create", "ATF only: test assets"),
     ("core_company", "create", "ATF only: test company and manufacturers"),
     ("cmdb_hardware_product_model", "create", "ATF only: test model"),
+]
+
+
+# Form layouts (default view): fields in order; ".split" starts the right column, ".end_split" ends the
+# two-column block, ".begin_split" starts the next one. related = related lists (table.reference_field).
+FORMS = {
+    CASE: {
+        "fields": [
+            "number",
+            "leaver",
+            "manager",
+            "hr_contact",
+            "private_email",
+            "trigger_source",
+            ".split",
+            "state",
+            "priority",
+            "last_working_day",
+            "lwd_estimated",
+            "due_date",
+            "assignment_group",
+            ".end_split",
+            "short_description",
+            ".begin_split",
+            "assets_total",
+            "assets_returned",
+            "assets_lost",
+            "assets_open",
+            ".split",
+            "return_rate",
+            "cycle_time_days",
+            "reminder_level",
+            "last_reminder",
+            "escalated",
+            ".end_split",
+            "work_notes",
+            "close_notes",
+        ],
+        "related": ["asset_task.parent"],
+    },
+    FINDING: {
+        "fields": [
+            "short_description",
+            ".begin_split",
+            "asset",
+            "ci",
+            "company",
+            "state",
+            "last_seen",
+            ".split",
+            "asset_state",
+            "asset_substate",
+            "ci_status",
+            "expected_ci_status",
+            ".end_split",
+            "leading_side",
+            "preview_asset_leads",
+            "preview_ci_leads",
+            ".begin_split",
+            "proposed_asset_state",
+            "proposed_asset_substate",
+            ".split",
+            "fixed_by",
+            "fixed_on",
+            ".end_split",
+            "resolution",
+        ],
+        "related": [AUDIT + ".finding"],
+    },
+    RULE: {
+        "fields": [
+            "code",
+            "name",
+            "active",
+            "order",
+            "rule_group",
+            ".split",
+            "dimension",
+            "weight",
+            "rule_type",
+            "table_name",
+            "company_field",
+            ".end_split",
+            "population_query",
+            "defect_query",
+            "field",
+            "compare_field",
+            "remediation",
+        ],
+        "related": [],
+    },
+    CARD: {
+        "fields": ["name", "company", ".split", "active", ".end_split", "description"],
+        "related": [SNAP + ".scorecard"],
+    },
+    SNAP: {
+        "fields": [
+            "snapshot_label",
+            "scorecard",
+            "score",
+            "trigger",
+            ".split",
+            "rules_evaluated",
+            "rules_invalid",
+            "rules_empty",
+            "population_total",
+            "defects_total",
+            "duration_ms",
+            ".end_split",
+        ],
+        "related": [RESULT + ".snapshot"],
+    },
+    RESULT: {
+        "fields": [
+            "rule",
+            "snapshot",
+            "status",
+            "score",
+            ".split",
+            "population",
+            "defects",
+            "weight",
+            "dimension",
+            "rule_group",
+            ".end_split",
+            "message",
+        ],
+        "related": [],
+    },
+    AUDIT: {
+        "fields": [
+            "target_display",
+            "module",
+            "action",
+            "target_table",
+            "target_id",
+            ".split",
+            "field",
+            "old_value",
+            "new_value",
+            "leading_side",
+            "finding",
+            ".end_split",
+            "note",
+        ],
+        "related": [],
+    },
+}
+
+# List layouts (default view); (table, parent table for a related list or "", columns)
+LISTS = [
+    (
+        CASE,
+        "",
+        [
+            "number",
+            "leaver",
+            "last_working_day",
+            "trigger_source",
+            "state",
+            "assets_total",
+            "assets_returned",
+            "assets_lost",
+            "return_rate",
+            "cycle_time_days",
+            "reminder_level",
+            "escalated",
+        ],
+    ),
+    # asset_task belongs to Global: a scoped app may not add list layouts to it (platform rule), so the
+    # return task related list uses the asset_task default layout; the outcome column is added per user.
+    (
+        FINDING,
+        "",
+        [
+            "short_description",
+            "asset",
+            "asset_state",
+            "ci_status",
+            "expected_ci_status",
+            "state",
+            "leading_side",
+            "last_seen",
+        ],
+    ),
+    (RULE, "", ["order", "code", "name", "rule_group", "dimension", "weight", "table_name", "rule_type", "active"]),
+    (
+        SNAP,
+        "",
+        ["snapshot_label", "scorecard", "score", "rules_evaluated", "defects_total", "trigger", "sys_created_on"],
+    ),
+    (RESULT, SNAP, ["rule", "status", "population", "defects", "score", "weight", "dimension"]),
+    (
+        AUDIT,
+        "",
+        [
+            "sys_created_on",
+            "module",
+            "action",
+            "target_display",
+            "field",
+            "old_value",
+            "new_value",
+            "leading_side",
+            "sys_created_by",
+        ],
+    ),
+    (AUDIT, FINDING, ["sys_created_on", "action", "target_display", "field", "old_value", "new_value", "leading_side"]),
+]
+
+
+REPORTS = [
+    # Line over time: one point per day (the nightly snapshot); ServiceNow trends have no finer unit than an hour.
+    (
+        "ITAM Toolkit: DQ score trend",
+        {
+            "table": SNAP,
+            "type": "line",
+            "trend_field": "sys_created_on",
+            "interval": "date",
+            "aggregate": "AVG",
+            "sumfield": "score",
+            "field": "scorecard",
+            "filter": "scorecard.active=true",
+        },
+    ),
+    # Every snapshot as its own bar, also for several runs on one day
+    (
+        "ITAM Toolkit: DQ score per snapshot",
+        {
+            "table": SNAP,
+            "type": "bar",
+            "field": "snapshot_label",
+            "aggregate": "AVG",
+            "sumfield": "score",
+            "filter": "scorecard.active=true^ORDERBYsnapshot_label",
+        },
+    ),
+    (
+        "ITAM Toolkit: leaver cases by state",
+        {"table": CASE, "type": "bar", "field": "state", "aggregate": "COUNT", "filter": ""},
+    ),
+    (
+        "ITAM Toolkit: return outcomes",
+        {
+            "table": "asset_task",
+            "type": "pie",
+            "field": OUTCOME,
+            "aggregate": "COUNT",
+            "filter": OUTCOME + "ISNOTEMPTY",
+        },
+    ),
+    (
+        "ITAM Toolkit: leaver cycle time (closed cases)",
+        {
+            "table": CASE,
+            "type": "single_score",
+            "aggregate": "AVG",
+            "sumfield": "cycle_time_days",
+            "filter": "active=false",
+        },
+    ),
 ]
 
 
@@ -383,6 +665,18 @@ def build() -> list[dict]:
             },
         )
 
+    for target, _why in API_PRIVILEGES:
+        add(
+            "sys_scope_privilege",
+            {
+                "source_scope": "{{APP}}",
+                "target_scope": GLOBAL,
+                "target_name": target,
+                "target_type": "scriptable",
+                "operation": "execute",
+            },
+            {"status": "allowed"},
+        )
     for target, ops, _why in PRIVILEGES:
         for op in ops.split(","):
             add(
@@ -612,7 +906,7 @@ def build() -> list[dict]:
             "Die IT-Asset-Verwaltung erhält "
             "je zugewiesenem Gerät eine Rückgabe-Aufgabe; Erinnerungen gehen an Vorgesetzte und HR.</p>",
             "sc_catalogs": "{{lookup:sc_catalog:title=Service Catalog}}",
-            "category": "{{lookup:sc_category:title=Hardware Asset^sc_catalog.title=Service Catalog}}",
+            "category": "{{lookup:sc_category:title=Hardware^sc_catalog.title=Service Catalog}}",
             "script": src("record_producers/austritt_melden.js"),
         },
         key="producer",
@@ -674,6 +968,10 @@ def build() -> list[dict]:
             },
         )
 
+    # Reports (no Performance Analytics): trend as a line over the snapshots, leaver KPIs
+    for title, values in REPORTS:
+        add("sys_report", {"title": title, "sys_scope": "{{APP}}"}, values)
+
     # ATF tests
     for key, name, file, desc in (
         (
@@ -718,7 +1016,10 @@ def main() -> None:
     if args.only:
         keep = set(args.only.split(","))
         recs = [r for r in recs if r["table"] in keep]
-    Path(args.out).write_text(json.dumps({"records": recs}, ensure_ascii=False, indent=1), encoding="utf-8")
+    layouts = {"forms": FORMS, "lists": [{"table": t, "parent": p, "columns": c} for t, p, c in LISTS]}
+    Path(args.out).write_text(
+        json.dumps({"records": recs, "layouts": layouts}, ensure_ascii=False, indent=1), encoding="utf-8"
+    )
     print(f"{len(recs)} records -> {args.out}")
 
 

@@ -1,0 +1,409 @@
+{
+ "scorecard": {
+  "scorecard": "Muster AG",
+  "company_name": "Muster AG",
+  "snapshot": "Muster AG 2026-11-11 04:12:46",
+  "created_on": "2026-11-11 12:12:46",
+  "score": 91.11,
+  "results": [
+   {
+    "code": "C01",
+    "rule": "CI without serial number",
+    "table": "cmdb_ci_hardware",
+    "rule_type": "query",
+    "population_query": "",
+    "defect_query": "serial_numberISEMPTY",
+    "field": "",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 3,
+    "population": 203,
+    "defects": 8,
+    "score": 96.06
+   },
+   {
+    "code": "C02",
+    "rule": "CI without location",
+    "table": "cmdb_ci_hardware",
+    "rule_type": "query",
+    "population_query": "",
+    "defect_query": "locationISEMPTY",
+    "field": "",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 2,
+    "population": 203,
+    "defects": 8,
+    "score": 96.06
+   },
+   {
+    "code": "C03",
+    "rule": "Duplicate serial number",
+    "table": "cmdb_ci_hardware",
+    "rule_type": "duplicate",
+    "population_query": "",
+    "defect_query": "",
+    "field": "serial_number",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 3,
+    "population": 203,
+    "defects": 3,
+    "score": 98.52
+   },
+   {
+    "code": "C04",
+    "rule": "Manufacturer differs from the model's manufacturer",
+    "table": "cmdb_ci_hardware",
+    "rule_type": "field_mismatch",
+    "population_query": "",
+    "defect_query": "",
+    "field": "manufacturer",
+    "compare_field": "model_id.manufacturer",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 2,
+    "population": 203,
+    "defects": 13,
+    "score": 93.6
+   },
+   {
+    "code": "C05",
+    "rule": "End-user device in use without assigned user",
+    "table": "cmdb_ci_hardware",
+    "rule_type": "query",
+    "population_query": "sys_class_nameINcmdb_ci_computer,cmdb_ci_hardware^install_statusIN1,3",
+    "defect_query": "assigned_toISEMPTY",
+    "field": "",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 3,
+    "population": 100,
+    "defects": 7,
+    "score": 93.0
+   },
+   {
+    "code": "C06",
+    "rule": "Retired end-user device still assigned",
+    "table": "cmdb_ci_hardware",
+    "rule_type": "query",
+    "population_query": "sys_class_nameINcmdb_ci_computer,cmdb_ci_hardware^install_status=7",
+    "defect_query": "assigned_toISNOTEMPTY",
+    "field": "",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 2,
+    "population": 45,
+    "defects": 3,
+    "score": 93.33
+   },
+   {
+    "code": "C07",
+    "rule": "Device in use by an inactive user (leaver)",
+    "table": "cmdb_ci_hardware",
+    "rule_type": "query",
+    "population_query": "install_statusIN1,3^assigned_toISNOTEMPTY",
+    "defect_query": "assigned_to.active=false",
+    "field": "",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 3,
+    "population": 93,
+    "defects": 1,
+    "score": 98.92
+   },
+   {
+    "code": "C08",
+    "rule": "CI without model",
+    "table": "cmdb_ci_hardware",
+    "rule_type": "query",
+    "population_query": "",
+    "defect_query": "model_idISEMPTY",
+    "field": "",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 1,
+    "population": 203,
+    "defects": 0,
+    "score": 100.0
+   },
+   {
+    "code": "A01",
+    "rule": "Hardware asset without serial number",
+    "table": "alm_hardware",
+    "rule_type": "query",
+    "population_query": "",
+    "defect_query": "serial_numberISEMPTY",
+    "field": "",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 2,
+    "population": 197,
+    "defects": 8,
+    "score": 95.94
+   },
+   {
+    "code": "A02",
+    "rule": "Active asset without warranty date",
+    "table": "alm_hardware",
+    "rule_type": "query",
+    "population_query": "install_statusIN1,3,6",
+    "defect_query": "warranty_expirationISEMPTY",
+    "field": "",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 1,
+    "population": 151,
+    "defects": 3,
+    "score": 98.01
+   },
+   {
+    "code": "A03",
+    "rule": "Duplicate asset tag",
+    "table": "alm_hardware",
+    "rule_type": "duplicate",
+    "population_query": "",
+    "defect_query": "",
+    "field": "asset_tag",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 2,
+    "population": 197,
+    "defects": 0,
+    "score": 100.0
+   },
+   {
+    "code": "A04",
+    "rule": "Asset in stock or retired but still assigned",
+    "table": "alm_hardware",
+    "rule_type": "query",
+    "population_query": "install_statusIN6,7",
+    "defect_query": "assigned_toISNOTEMPTY",
+    "field": "",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 2,
+    "population": 58,
+    "defects": 0,
+    "score": 100.0
+   },
+   {
+    "code": "X01",
+    "rule": "Asset status differs from CI status (OOTB mapping)",
+    "table": "alm_hardware",
+    "rule_type": "drift",
+    "population_query": "",
+    "defect_query": "",
+    "field": "",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 3,
+    "population": 197,
+    "defects": 0,
+    "score": 100.0
+   },
+   {
+    "code": "U01",
+    "rule": "Active user without manager",
+    "table": "sys_user",
+    "rule_type": "query",
+    "population_query": "active=true",
+    "defect_query": "managerISEMPTY",
+    "field": "",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 2,
+    "population": 126,
+    "defects": 126,
+    "score": 0.0
+   },
+   {
+    "code": "U02",
+    "rule": "Active user without department",
+    "table": "sys_user",
+    "rule_type": "query",
+    "population_query": "active=true",
+    "defect_query": "departmentISEMPTY",
+    "field": "",
+    "compare_field": "",
+    "company_field": "company",
+    "status": "ok",
+    "weight": 1,
+    "population": 126,
+    "defects": 0,
+    "score": 100.0
+   }
+  ]
+ },
+ "mapping": {
+  "1|": {
+   "ci": "1"
+  },
+  "1|end_of_support": {
+   "ci": "1"
+  },
+  "1|in_repair": {
+   "ci": "1"
+  },
+  "1|is_shutdown": {
+   "ci": "1"
+  },
+  "1|pending_fulfillment": {
+   "ci": "1"
+  },
+  "1|pending_repair": {
+   "ci": "1"
+  },
+  "1|pending_retirement": {
+   "ci": "1"
+  },
+  "10|": {
+   "ci": ""
+  },
+  "2|": {
+   "ci": "2"
+  },
+  "3|": {
+   "ci": "3"
+  },
+  "6|": {
+   "ci": "6"
+  },
+  "6|available": {
+   "ci": "6"
+  },
+  "6|defective": {
+   "ci": "5"
+  },
+  "6|in_repair": {
+   "ci": "6"
+  },
+  "6|legal_hold": {
+   "ci": "6"
+  },
+  "6|on_hold": {
+   "ci": "6"
+  },
+  "6|pending_certificate": {
+   "ci": "6"
+  },
+  "6|pending_disposal": {
+   "ci": "6"
+  },
+  "6|pending_donation": {
+   "ci": "6"
+  },
+  "6|pending_evaluation": {
+   "ci": "6"
+  },
+  "6|pending_install": {
+   "ci": "4"
+  },
+  "6|pending_repair": {
+   "ci": "5"
+  },
+  "6|pending_resale": {
+   "ci": "6"
+  },
+  "6|pending_return": {
+   "ci": "6"
+  },
+  "6|pending_transfer": {
+   "ci": "6"
+  },
+  "6|pre_allocated": {
+   "ci": "6"
+  },
+  "6|quarantine": {
+   "ci": "6"
+  },
+  "6|reserved": {
+   "ci": "6"
+  },
+  "6|test": {
+   "ci": "6"
+  },
+  "7|": {
+   "ci": "7"
+  },
+  "7|buy_out": {
+   "ci": "7"
+  },
+  "7|disposed": {
+   "ci": "7"
+  },
+  "7|donated": {
+   "ci": "7"
+  },
+  "7|lease_return": {
+   "ci": "7"
+  },
+  "7|obsolete": {
+   "ci": "7"
+  },
+  "7|pending_disposal": {
+   "ci": "7"
+  },
+  "7|pending_resale": {
+   "ci": "7"
+  },
+  "7|recalled": {
+   "ci": "7"
+  },
+  "7|rma": {
+   "ci": "7"
+  },
+  "7|sold": {
+   "ci": "7"
+  },
+  "7|vendor_credit": {
+   "ci": "7"
+  },
+  "8|": {
+   "ci": "100"
+  },
+  "8|lost": {
+   "ci": "100"
+  },
+  "8|stolen": {
+   "ci": "8"
+  },
+  "9|": {
+   "ci": "6"
+  },
+  "9|available": {
+   "ci": "6"
+  },
+  "9|defective": {
+   "ci": "5"
+  },
+  "9|pending_disposal": {
+   "ci": "6"
+  },
+  "9|pending_donation": {
+   "ci": "6"
+  },
+  "9|pending_install": {
+   "ci": "4"
+  },
+  "9|pending_resale": {
+   "ci": "6"
+  },
+  "9|reserved": {
+   "ci": "6"
+  }
+ }
+}
