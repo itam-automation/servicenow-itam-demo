@@ -122,6 +122,34 @@ class DeviceScript(unittest.TestCase):
             self.assertEqual("".join(variant.split()).upper(), original)
 
 
+class ImportCheck(unittest.TestCase):
+    """Die Prüfung der Quelldaten im Transformskript, nachgebildet auf den Testdaten."""
+
+    SCRIPT = (SCRIPT_DIR / BY_KEY["devices"].onbefore_script).read_text(encoding="utf-8")
+    ISSUES = DATA["ground_truth"]["issues"]
+
+    def test_rules_are_in_the_script(self):
+        self.assertIn("dataSource == 'MusterInventar' && !val('location')", self.SCRIPT)
+        self.assertIn("expected !== val('manufacturer')", self.SCRIPT)
+        self.assertIn("source.setValue('u_dq_findings'", self.SCRIPT)
+
+    def test_location_rule_hits_exactly_the_injected_issues(self):
+        flagged = {d["source_id"] for d in DATA["devices"] if d["source"] == gen.SOURCE_INVENTORY and not d["location"]}
+        injected = {i["source_id"] for i in self.ISSUES if i["type"] == "missing_location"}
+        self.assertEqual(flagged, injected)
+
+    def test_manufacturer_rule_hits_exactly_the_injected_issues(self):
+        """Hersteller der Quelle gegen Hersteller des Modells, exakt verglichen (also auch «LENOVO»)."""
+        maker = {m.name: m.manufacturer for m in gen.MODELS}
+        flagged = {d["source_id"] for d in DATA["devices"]
+                   if d["manufacturer"] and d["manufacturer"] != maker[d["model_id"]]}
+        injected = {i["source_id"] for i in self.ISSUES if i["type"] == "manufacturer_name_variant"}
+        self.assertEqual(flagged, injected)
+        case_only = [i for i in self.ISSUES if i["type"] == "manufacturer_name_variant"
+                     and i["detail"].split(" statt ")[0].lower() == i["detail"].split(" statt ")[1].lower()]
+        self.assertEqual(len(case_only), 2)  # «LENOVO»: die Datenbank vergleicht ohne Gross-/Kleinschreibung
+
+
 class Payload(unittest.TestCase):
     def test_payload_without_prefix_and_as_text(self):
         """insertMultiple ordnet über den Spaltennamen ohne u_ zu."""

@@ -56,6 +56,9 @@ TARGETS = [
     ("Firma und neu angelegte Hersteller", "core_company", 20, "creator", "loader"),
 ]
 TOTALS = {"alm_hardware": "Assets (über CI-Herkunft)", "cmdb_ci_hardware": "CIs"}
+# Tabellen, deren Datensätze ServiceNow beim Löschen der CIs mitlöschen kann (Referenz installed_on):
+# vor dem Löschen dürfen es weniger sein als erwartet, nie mehr.
+CASCADE_FROM_CIS = ("cmdb_software_instance",)
 
 
 class Selection:
@@ -144,6 +147,9 @@ def execute(client: SNClient, sel: Selection) -> int:
             print(f"  CIs: noch {len(remaining)} von {expected} (Rest nach Asset-Löschung, Klassen: {classes})")
             continue
         found = sel.count(table, kind)
+        if table in CASCADE_FROM_CIS and found is not None and found <= expected:
+            print(f"  {label}: noch {found} von {expected} (Rest nach Löschung der CIs)")
+            continue
         if found != expected:
             print(f"Abbruch vor dem Löschen: {label} {found} statt {expected}. Erst klären.")
             return 1

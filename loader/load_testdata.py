@@ -122,6 +122,11 @@ def write_run_report(results: list[dict], duplicates: list[str]) -> None:
             target = staging.target
         result = ", ".join(f"{n} {k}" for k, n in sorted(outcome.items()))
         lines.append(f"| {number} | `{staging.table}` | {target} | {len(rows)} | {result} |")
+    findings = Counter(part.split(":", 1)[0].strip() for r in results if r["file"] == "devices"
+                       for part in r.get("dq_findings", "").split(";") if part.strip())
+    if findings:
+        lines += ["", "Import check on the source data (column `u_dq_findings`, report «ITAM DQ 8»):", ""]
+        lines += [f"- {code}: {n} rows" for code, n in sorted(findings.items())]
     if duplicates:
         lines += ["", "Duplicates from the network scan (compared with `ground_truth.json`):", ""]
         lines += [f"- {d.strip()}" for d in duplicates]
@@ -161,6 +166,8 @@ def main(argv: list[str] | None = None) -> int:
             results += res
             ops = Counter(r.get("ire_operation") or r["status"] for r in res)
             print("    IRE: " + ", ".join(f"{n} {op}" for op, n in sorted(ops.items())))
+            flagged = sum(1 for r in res if r.get("dq_findings"))
+            print(f"    Importprüfung: {flagged} Zeilen mit Befund")
         ground_truth = json.loads((args.data_dir / "ground_truth.json").read_text(encoding="utf-8"))
         comparison = compare_with_ground_truth(results, ground_truth)
         if comparison:

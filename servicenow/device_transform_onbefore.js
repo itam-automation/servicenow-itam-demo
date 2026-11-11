@@ -15,6 +15,10 @@
  *   diese Fälle findet der Report «ITAM DQ 7».
  * - Das Ergebnis der IRE steht in den Spalten u_ire_* der Staging-Zeile und
  *   im Kommentar der Zeile; daraus liest der Loader den Lauf zurück.
+ * - Prüfung der Quelldaten (Spalte u_dq_findings, Report «ITAM DQ 8»): Befunde,
+ *   die in der CMDB nicht mehr sichtbar wären, weil die Plattform sie beim Laden
+ *   bereinigt (Standort vom Benutzer übernommen, Hersteller ohne Rücksicht auf
+ *   Gross-/Kleinschreibung zugeordnet), werden hier gemeldet statt verschluckt.
  */
 (function runTransformScript(source, map, log, target) {
     var DATA_SOURCES = {'Inventar-Export': 'MusterInventar', 'Netzwerk-Scan': 'MusterNetzScan'};
@@ -83,10 +87,11 @@
     }
 
     var companyId = val('company') ? find('core_company', 'name', val('company')) : '';
+    var modelId = val('model_id') ? find('cmdb_hardware_product_model', 'name', val('model_id')) : '';
     var refs = {
         company: companyId,
         manufacturer: val('manufacturer') ? manufacturer(val('manufacturer')) : '',
-        model_id: val('model_id') ? find('cmdb_hardware_product_model', 'name', val('model_id')) : '',
+        model_id: modelId,
         assigned_to: val('assigned_to') ? find('sys_user', 'user_name', val('assigned_to')) : '',
         location: val('location') ? find('cmn_location', 'name', val('location')) : '',
         department: val('department') ? find('cmn_department', 'name', val('department'), 'company', companyId) : ''
@@ -99,6 +104,23 @@
             missing.push(field + '=' + val(field));
         }
     }
+
+    // Prüfung der Quelldaten, vor dem Laden
+    var findings = [];
+    if (dataSource == 'MusterInventar' && !val('location')) {
+        // Das Inventar ist führend für den Standort (Abgleichsregel); der Scan liefert keinen.
+        findings.push('location_missing');
+    }
+    if (modelId && val('manufacturer')) {
+        var model = new GlideRecord('cmdb_hardware_product_model');
+        model.get(modelId);
+        var expected = model.manufacturer.getDisplayValue();
+        if (expected && expected !== val('manufacturer')) {
+            // exakter Vergleich: «LENOVO» ist nicht «Lenovo», auch wenn die Datenbank beides gleich findet
+            findings.push('manufacturer_mismatch: ' + val('manufacturer') + ' (Modell: ' + expected + ')');
+        }
+    }
+    source.setValue('u_dq_findings', findings.join('; '));
 
     var payload = {
         items: [{
@@ -123,7 +145,8 @@
     source.setValue('u_ire_match', matched.join(', '));
     source.setValue('u_ire_missing', missing.join(', '));
     source.sys_import_state_comment = 'IRE ' + (item.operation || '') + ' ' + (item.sysId || '') +
-        (matched.length ? ' via ' + matched.join(', ') : '') + (errors.length ? ' Fehler: ' + errors.join('; ') : '');
+        (matched.length ? ' via ' + matched.join(', ') : '') + (errors.length ? ' Fehler: ' + errors.join('; ') : '') +
+        (findings.length ? ' | DQ: ' + findings.join('; ') : '');
 
     if (errors.length) {
         error = true;

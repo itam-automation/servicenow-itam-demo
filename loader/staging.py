@@ -91,7 +91,7 @@ STAGING = (
         "Muster AG Geräte -> CMDB (IRE)",
         DEVICE_COLUMNS,
         onbefore_script="device_transform_onbefore.js",
-        result_columns=("ire_operation", "ire_ci", "ire_match", "ire_missing"),
+        result_columns=("ire_operation", "ire_ci", "ire_match", "ire_missing", "dq_findings"),
     ),
     Staging(
         "software", "u_muster_software_imp", "Muster AG Import Software", "cmdb_software_product_model",
