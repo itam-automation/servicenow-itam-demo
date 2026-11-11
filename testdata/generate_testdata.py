@@ -333,7 +333,9 @@ ISSUE_TYPES = {
     "missing_location": "Standort fehlt",
     "manufacturer_name_variant": "Herstellername weicht von der Normschreibweise ab",
     "duplicate_same_serial": "Dublette aus dem Netzwerk-Scan: gleiche Seriennummer, Name als FQDN",
-    "duplicate_serial_variant": "Dublette aus dem Netzwerk-Scan: Seriennummer in anderer Schreibweise, Name als FQDN, andere MAC",
+    "duplicate_serial_variant": (
+        "Dublette aus dem Netzwerk-Scan: Seriennummer in anderer Schreibweise, Name als FQDN, andere MAC"
+    ),
     "duplicate_same_name_no_serial": "Dublette aus dem Netzwerk-Scan: gleicher Name, keine Seriennummer",
 }
 
@@ -513,7 +515,6 @@ def make_devices(rng: random.Random, count: int, ref: date, users: list[dict]) -
     loc_codes = [loc[0] for loc in LOCATIONS]
     loc_name = {loc[0]: loc[1] for loc in LOCATIONS}
     loc_code_by_name = {loc[1]: loc[0] for loc in LOCATIONS}
-    loc_weights = [loc[5] for loc in LOCATIONS]
 
     free_users = users[:]
     rng.shuffle(free_users)
@@ -918,7 +919,8 @@ def print_summary(data: dict, out: Path) -> None:
           f"Windows 10 (in Betrieb): {k['windows10_in_use']}")
     print("  Lizenzen:")
     for row in gt["sam"]:
-        print(f"    {row['product']:<36} Rechte {row['purchased_rights']:3d}  Nutzung {row['usage']:3d}  {row['status']}")
+        print(f"    {row['product']:<36} Rechte {row['purchased_rights']:3d}  "
+              f"Nutzung {row['usage']:3d}  {row['status']}")
 
 
 def main(argv: list[str] | None = None) -> None:

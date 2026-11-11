@@ -47,7 +47,7 @@ class SNClient:
         self.timeout = timeout
 
     @classmethod
-    def from_env(cls, path: Path = ENV_FILE) -> "SNClient":
+    def from_env(cls, path: Path = ENV_FILE) -> SNClient:
         env = load_env(path)
         missing = [k for k in ("SN_INSTANCE_URL", "SN_USER", "SN_PASSWORD") if not env.get(k)]
         if missing:
@@ -97,7 +97,8 @@ class SNClient:
             offset += page_size
 
     def create(self, table: str, values: dict) -> dict:
-        return self.request("POST", f"/api/now/table/{table}", {"sysparm_exclude_reference_link": "true"}, values)["result"]
+        params = {"sysparm_exclude_reference_link": "true"}
+        return self.request("POST", f"/api/now/table/{table}", params, values)["result"]
 
     def delete(self, table: str, sys_id: str) -> None:
         self.request("DELETE", f"/api/now/table/{table}/{sys_id}")

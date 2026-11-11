@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dev tools
+        run: pip install -r requirements-dev.txt
+
+      - name: Lint (ruff)
+        run: ruff check .
+
+      - name: Tests (pytest)
+        run: pytest -q
+
+      - name: Test data is reproducible
+        run: |
+          python testdata/generate_testdata.py --out /tmp/testdata > /dev/null
+          diff -r /tmp/testdata testdata/output
+
+      - name: No credentials or instance URL in the repo
+        run: |
+          if git grep -nE '[a-z]+[0-9]{4,}\.service-now\.com'; then
+            echo "Instance URL found"; exit 1
+          fi
+          if git grep -nE 'SN_(READONLY_)?PASSWORD=[^[:space:]#]+'; then
+            echo "Password found"; exit 1
+          fi

@@ -56,7 +56,8 @@ def fetch(client: SNClient) -> tuple[list[dict], dict[str, str]]:
         "assigned_to.location.name",
     ])
     cis = client.get_records("cmdb_ci_hardware", "company.name=Muster AG", fields)
-    os_by_name = {c["name"]: c["os"] for c in client.get_records("cmdb_ci_computer", "company.name=Muster AG", "name,os")}
+    computers = client.get_records("cmdb_ci_computer", "company.name=Muster AG", "name,os")
+    os_by_name = {c["name"]: c["os"] for c in computers}
     return cis, os_by_name
 
 
@@ -112,7 +113,8 @@ def platform_reason(key: str, ci: dict | None, detail: str) -> str:
     if key == "manufacturer_name_variant" and " statt " in detail:
         variant, canonical = detail.split(" statt ", 1)
         if variant.lower() == canonical.lower():
-            return "Variante unterscheidet sich nur in Gross-/Kleinschreibung, beim Laden dem vorhandenen Hersteller zugeordnet"
+            return ("Variante unterscheidet sich nur in Gross-/Kleinschreibung, "
+                    "beim Laden dem vorhandenen Hersteller zugeordnet")
     return ""
 
 
@@ -181,7 +183,7 @@ def main() -> int:
         lines.append(f"| {title} | {exp} | {got} |")
         print(f"  {title:<52} erwartet {exp:3d}  gefunden {got:3d}")
     if found["duplicates"]:
-        lines += ["", "Dubletten-Gruppen (gleiche Seriennummer nach Grossschreibung und Entfernen von Leerzeichen):", ""]
+        lines += ["", "Dubletten-Gruppen (gleiche Seriennummer nach Grossschreibung und ohne Leerzeichen):", ""]
         groups: dict[str, list[str]] = {}
         for c in cis:
             if c["name"] in found["duplicates"]:

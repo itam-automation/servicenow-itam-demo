@@ -96,7 +96,8 @@ def count_and_backup(client: SNClient, sel: Selection) -> bool:
         else:
             mark = "ok" if found == expected else "ABWEICHUNG"
             ok &= found == expected
-        print(f"  {label + ' (' + table + ')':<48} {expected:>8} {found if found is not None else '-':>9}  {who:<6} {mark}")
+        shown = found if found is not None else "-"
+        print(f"  {label + ' (' + table + ')':<48} {expected:>8} {shown:>9}  {who:<6} {mark}")
     backup = {
         "created_at": datetime.now().isoformat(timespec="seconds"),
         "filter_since": sel.since,
@@ -152,7 +153,7 @@ def execute(client: SNClient, sel: Selection) -> int:
 
     print("Nachzählung:")
     ok = True
-    for label, table, _, kind, who in TARGETS:
+    for label, table, _, kind, _who in TARGETS:
         found = sel.count(table, kind)
         ok &= found in (0, None)
         print(f"  {label + ' (' + table + ')':<48} {found if found is not None else 'nur als admin zählbar':>9}")
@@ -171,10 +172,25 @@ def execute(client: SNClient, sel: Selection) -> int:
     return 0 if ok else 1
 
 
+def apply_expectations(pairs: list[str]) -> None:
+    """--expect tabelle=anzahl: andere Erwartung als ein Volllauf (nicht genannte Tabellen: 0)."""
+    override = {}
+    for pair in pairs:
+        table, _, number = pair.partition("=")
+        if table not in {t[1] for t in TARGETS} or not number.isdigit():
+            raise SystemExit(f"Ungültige Erwartung: {pair}")
+        override[table] = int(number)
+    TARGETS[:] = [(label, table, override.get(table, 0), kind, who) for label, table, _, kind, who in TARGETS]
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Entfernt die vom Loader angelegten Testdaten.")
     parser.add_argument("--execute", action="store_true", help="wirklich löschen (sonst nur zählen und sichern)")
+    parser.add_argument("--expect", nargs="+", metavar="TABELLE=ANZAHL",
+                        help="erwartete Anzahl je Tabelle statt des Volllaufs, z. B. cmn_location=5")
     args = parser.parse_args(argv)
+    if args.expect:
+        apply_expectations(args.expect)
     client = SNClient.from_env()
     sel = Selection(client)
     print(f"Instanz {client.base_url}, Auswahl: angelegt von {client.user} seit {sel.since} (UTC)")
