@@ -1,161 +1,126 @@
 # ServiceNow ITAM Demo
 
-Portfolio-Projekt: IT Asset Management auf einer persönlichen ServiceNow-Entwicklerinstanz (PDI). Erfundene Firma «Muster AG», erfundene Daten, echte Arbeit auf der Plattform: CMDB über REST befüllen und bereinigen, Bestellprozess mit Flow Designer, Software-Lizenzen, ein nur lesender KI-Assistent.
+[![CI](https://github.com/itam-automation/servicenow-itam-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/itam-automation/servicenow-itam-demo/actions/workflows/ci.yml)
 
-> Alle Daten in diesem Projekt sind frei erfunden. Echt sind nur öffentlich bekannte Hersteller- und Produktnamen, damit die Normalisierung realistisch bleibt.
+> **Kurzfassung:** Portfolio-Projekt zu IT Asset Management auf einer persönlichen ServiceNow-Entwicklerinstanz (Release Brazil). Erfundene Testdaten der «Muster AG» (200 Geräte, 130 Benutzer, zwei Datenquellen) laufen über Import Sets mit Transform Maps in die CMDB. Die Identification and Reconciliation Engine (IRE) führt Dubletten aus dem Netzwerk-Scan zusammen. Reports in ServiceNow und ein Python-Check messen die Datenqualität gegen eine bekannte Wahrheit: **50 von 53 eingebauten Fehlern erkannt** (9 Dubletten von der IRE zusammengeführt, 41 von den Reports gefunden); die übrigen 3 hat die Plattform schon beim Laden bereinigt, unerkannt blieb keiner. Alle Daten sind erfunden.
 
-## Stand
+## Status
 
-| Nr. | Baustein | Stand |
+| # | Module | Status |
 |---|---|---|
-| 0 | Testdaten-Generator (Python) mit Tests | fertig, gegen die PDI geprüft |
-| 1 | PDI einrichten, Grundlagen | PDI läuft (Release Brazil), Integrationsbenutzer eingerichtet, Kurs offen |
-| 2 | CMDB über REST befüllen, Dublettenabgleich (IRE), Datenqualitäts-Report | offen |
-| 3 | Catalog Item «Laptop anfordern», Flow, Business Rule, ATF-Test | offen |
-| 4 | Software Asset Management: Lizenzrechte, Installationen, Compliance | offen |
-| 5 | KI-Assistent, technisch nur lesend | offen |
+| 0 | Test data generator with injected errors (ground truth) and tests | done |
+| 1 | Personal developer instance (release Brazil), integration user | done |
+| 2 | CMDB load via Import Sets and Transform Maps, duplicate handling via IRE, data quality reports | **done** |
+| 3 | Catalog item «Request laptop» with Flow Designer, business rule, ATF test | open (milestone 2) |
+| 4 | Software Asset Management: entitlements, installations, compliance | open (milestone 3) |
+| 5 | AI assistant, technically read-only | open (milestone 3) |
 
-## Architektur (geplant)
+## The problem
+
+In IT Asset Management the CMDB is fed by several sources: an inventory export, a network scan, procurement. Each source has its own gaps: duplicates with slightly different names or serial numbers, missing serial numbers, manufacturer spelling variants («DELL», «HP Inc.»), devices still assigned to people who have left. Without a repeatable load process and a measurable quality check, «the CMDB is clean» remains an opinion.
+
+## The solution
+
+| Step | What | Where |
+|---|---|---|
+| 1 | Generate test data with **known, injected errors** (ground truth) | `testdata/generate_testdata.py` |
+| 2 | Load master data and devices through **Import Sets with Transform Maps** (Import Set API, one import set per file) | `loader/load_testdata.py`, `loader/staging.py` |
+| 3 | Route every device row through the **IRE** in an onBefore transform script; normalize serial numbers; a reconciliation rule makes the inventory authoritative for organisational attributes | `servicenow/device_transform_onbefore.js` |
+| 4 | Measure **data quality** in ServiceNow (10 reports) and against the ground truth (Python check, result as a number) | `loader/check_data_quality.py`, `docs/data_quality.md` |
+| 5 | Reset the instance safely (select by creator, count first, verify totals) | `loader/reset_testdata.py` |
+
+## Architecture
 
 ```mermaid
 flowchart LR
-  G["Testdaten-Generator<br/>Python"] -->|CSV| L["Loader<br/>Python"]
-  L -->|"REST: Import Set API / IRE"| CMDB[("CMDB<br/>auf der PDI")]
-  CMDB --> R["Reports<br/>Datenqualität"]
-  SC["Catalog Item<br/>Laptop anfordern"] --> F["Flow Designer<br/>Genehmigung, Zuweisung"]
-  F --> CMDB
-  BR["Business Rule"] --- CMDB
-  SAM["SAM<br/>Lizenzen, Installationen"] --- CMDB
-  A["KI-Assistent<br/>nur lesend"] -->|"REST: Table API, nur GET"| CMDB
+  G["Test data generator<br/>Python, ground_truth.json"] -->|CSV| L["Loader<br/>Python"]
+  L -->|"Import Set API<br/>insertMultiple"| S[("5 staging tables")]
+  S -->|"Transform Maps<br/>coalesce"| M["Locations, departments,<br/>users, models"]
+  S -->|"onBefore script"| IRE["IRE<br/>Hardware Rule"]
+  IRE --> CMDB[("CMDB<br/>cmdb_ci_hardware")]
+  CMDB -->|"async job"| A["Assets<br/>alm_hardware"]
+  CMDB --> R["Reports<br/>ITAM DQ 1-7, KPIs"]
+  Q["Data quality check<br/>Python"] -->|"Table API, read only"| CMDB
+  Q --> D["docs/data_quality.md"]
 ```
 
-## Bausteine
+The loader uses a dedicated integration user (`svc_itam_loader`, machine identity, web service access only). Credentials live in a local `.env` file that is never committed.
 
-### 1. Grundlagen
-- Persönliche Entwicklerinstanz über developer.servicenow.com
-- Kurs «ServiceNow Fundamentals» in der ServiceNow University
+## Results
 
-### 2. CMDB befüllen und prüfen
-- **Ziel:** Die Testdaten landen über die REST-Schnittstelle in der CMDB. Dubletten aus einer zweiten Quelle werden über die Identification and Reconciliation Engine (IRE) erkannt. Ein Report zeigt die Datenqualität.
-- **Prüfbar:** Der Generator schreibt mit `ground_truth.json` auf, welche Fehler er eingebaut hat. Der Report in ServiceNow muss genau diese finden.
-- **Nachweis:** folgt (Code in `loader/`, Screenshots in `docs/screenshots/`)
+Final run on 11 Nov 2026, starting from an instance without any Muster AG data:
 
-### 3. Catalog Item «Laptop anfordern»
-- **Ziel:** Bestellung mit Genehmigung durch die vorgesetzte Person, Zuweisung eines Lagergeräts, Wechsel des Lifecycle-Status. Dazu eine Business Rule in JavaScript und ein automatisierter Test (ATF).
-- **Nachweis:** folgt (Skripte und Update Set in `servicenow/`)
+**50 of 53 injected data quality issues detected**: 9 scan duplicates merged by the IRE, 41 issues found by the reports. The remaining 3 were already resolved by the platform on load (location taken over from the assigned user; «LENOVO» matched to the existing «Lenovo»). None went undetected. Per-issue details: [`docs/data_quality.md`](docs/data_quality.md).
 
-### 4. Software Asset Management
-- **Ziel:** Lizenzrechte und Installationen erfassen, Compliance-Übersicht (unter- und überlizenziert, Installationen ohne Lizenz).
-- **Nachweis:** folgt
-
-### 5. KI-Assistent, nur lesend
-- **Ziel:** Beantwortet Fragen zur CMDB, zum Beispiel «Bei welchen Geräten endet die Garantie 2027?».
-- **Nur lesend, technisch abgesichert:** eigener Benutzer in der Instanz nur mit Leserechten, Zugriff nur über GET. Antworten nur aus abgefragten Daten.
-- **Nachweis:** folgt (Code in `assistant/`)
-
-## Testdaten
-
-Der Generator braucht nur Python 3 ohne Zusatzpakete. Gleicher Seed und gleicher Stichtag ergeben byte-genau dieselben Dateien.
-
-```bash
-python3 testdata/generate_testdata.py
-```
-
-```bash
-python3 testdata/generate_testdata.py --seed 7 --count 300 --reference-date 2026-11-11 --out /pfad/zum/ordner
-```
-
-Ausgabe in `testdata/output/` (Stand: Seed 42, Stichtag 11.11.2026):
-
-| Datei | Inhalt |
+| | |
 |---|---|
-| `locations.csv` | 5 Standorte in der Schweiz |
-| `departments.csv` | 9 Abteilungen mit Kostenstellen |
-| `users.csv` | 130 Benutzer, davon 4 inaktiv |
-| `models.csv` | 36 Hardware-Modelle |
-| `devices.csv` | 200 Geräte aus dem Inventar-Export und 12 Dubletten aus einem Netzwerk-Scan |
-| `software.csv` | 22 Softwareprodukte mit Rohnamen und Lizenzmetrik |
-| `installations.csv` | 582 Installationen auf Laptops und Desktops |
-| `entitlements.csv` | 8 Lizenzrechte |
-| `ground_truth.json` | eingebaute Fehler, Kennzahlen, erwartete Lizenzbilanz |
+| Import | 6 import sets, 392 rows, 0 errors: 5 locations, 9 departments, 130 users, 36 models, 200 + 12 devices ([`docs/import_run.md`](docs/import_run.md)) |
+| IRE, inventory export | 200 CIs created |
+| IRE, network scan | 12 rows: 9 merged into existing CIs (6 via serial number + MAC, 3 via name + MAC), 3 created as separate CIs because name and MAC contradict the matching serial number; all 3 are listed by report «ITAM DQ 7» |
+| CMDB | 203 CIs of Muster AG; 197 hardware assets created automatically from them (the 6 firewalls have no asset class) |
+| KPIs (in use) | warranty ending in 2027: 22, warranty expired: 56, still on Windows 10: 3; all equal to the ground truth |
 
-Geräte: 110 Laptops, 35 Desktops, 18 Server, 10 Drucker, 15 Netzwerkgeräte, 12 Smartphones. Status: 139 Installed, 5 In Maintenance, 11 In Stock, 45 Retired.
+| Import sets of the final run | Transform maps |
+|---|---|
+| ![Import sets](docs/screenshots/01_import_sets_final_run.jpg) | ![Transform maps](docs/screenshots/02_transform_maps.jpg) |
+| **onBefore script calling the IRE** | **Report «ITAM DQ 7»: scan-only CIs (duplicate candidates)** |
+| ![Transform script](docs/screenshots/03_transform_script_ire.jpg) | ![Report DQ 7](docs/screenshots/04_report_scan_only_duplicates.jpg) |
+| **CMDB grouped by manufacturer: spelling variants** | |
+| ![Manufacturer variants](docs/screenshots/05_cmdb_manufacturer_variants.jpg) | |
 
-Bewusst eingebaute Fehler:
+## Findings on the platform
 
-| Anzahl | Fehler |
-|---:|---|
-| 8 | Seriennummer fehlt |
-| 6 | Standort fehlt |
-| 15 | Herstellername in abweichender Schreibweise (zum Beispiel «DELL» statt «Dell Inc.», «HP» statt «Hewlett-Packard») |
-| 5 | Endgerät in Betrieb ohne Benutzer |
-| 3 | Ausgemustertes Endgerät noch einem Benutzer zugewiesen |
-| 4 | Gerät in Betrieb bei inaktivem Benutzer (Austritt nicht verarbeitet) |
-| 6 | Dublette: gleiche Seriennummer, Name als FQDN |
-| 3 | Dublette: Seriennummer in anderer Schreibweise, andere MAC, keine IP |
-| 3 | Dublette: gleicher Name, keine Seriennummer |
+Things the run made visible, each verified on the instance:
 
-Die drei Dublettenarten sind auf die Hardware Rule der IRE abgestimmt: Die erste trifft die Regel «Seriennummer», die dritte die Regel «Name». Bei der zweiten bleibt nur die Seriennummer in anderer Schreibweise, weil MAC und IP fehlen bzw. abweichen. Ob die IRE sie trotzdem erkennt, ist der eigentliche Test; das Ergebnis wird hier dokumentiert.
+- **A matching serial number is not enough when name and MAC contradict it.** Three scan records carried the serial number in another spelling (lowercase, trailing space), an FQDN name and the MAC of a second network card. The transform script normalizes serials, so they are identical afterwards, yet the IRE still created separate CIs for them; in dry runs a payload with the serial number alone did match. 9 of 12 scan duplicates were merged, the other 3 are caught by report «ITAM DQ 7». The lesson: clean, consistent identifiers per source matter more than extra matching logic.
+- **Reconciliation rules protect attributes.** The network scan reports FQDN host names. A reconciliation rule makes the inventory export authoritative for name, user, location and other organisational attributes, so a scan update does not overwrite them.
+- **Assets are created from CIs automatically**, asynchronously by the job «Asset – Create asset delayed sync» (every 15 minutes), based on the model category. The 6 firewalls have no model category with an asset class, so 203 CIs became 197 assets. Deleting an asset deletes its CI as well.
+- **Company names match case-insensitively.** The variant «LENOVO» was matched to the existing «Lenovo» on load, so it never became a data quality issue.
+- **The platform fills a missing location from the assigned user.**
+- **Hardware Asset Management (sn_hamp) is not available on a developer instance**, and Software Asset Management is not active by default. This project therefore works with the base CMDB and base asset tables.
 
-Herstellernamen: Die Normschreibweise entspricht den Herstellern, die in der PDI schon existieren («Dell Inc.», «Hewlett-Packard», «Lenovo», «Apple», «Cisco», «Samsung», «Brother»). Alle Datensätze tragen `company = Muster AG`, damit Reports sie von den Demo-Daten der PDI trennen.
+## Quickstart
 
-Dazu Kennzahlen, die sich aus den Daten ergeben (Geräte in Betrieb): Garantieende 2027 bei 22 Geräten, Garantie abgelaufen bei 56, Windows 10 noch auf 3 Geräten. Lizenzbilanz: 3 Produkte unterlizenziert, 3 überlizenziert, 1 ausgeglichen, 1 ohne Lizenz (WinRAR), 1 gekauft, aber nirgends installiert (Project Professional).
-
-Tests:
+Requirements: Python 3.11+, a ServiceNow developer instance with the configuration described in `servicenow/` and an integration user.
 
 ```bash
-python3 -m unittest discover -s tests -v
-```
-
-Die Tests prüfen unter anderem, dass die Fehlerliste genau die fehlerhaften Datensätze nennt (keine fehlenden, keine zufällig zusätzlichen) und dass die Lizenznutzung unabhängig nachgezählt dasselbe ergibt.
-
-## Projektstruktur
-
-```
-.
-├── README.md
-├── .env.example          Vorlage für Zugangsdaten (die echte .env bleibt lokal)
-├── testdata/
-│   ├── generate_testdata.py
-│   └── output/           erzeugte CSV-Dateien und ground_truth.json
-├── loader/               REST-Loader (Baustein 2), check_connection.py
-├── servicenow/           Skripte und Update Sets aus der Instanz (Bausteine 2 bis 4)
-├── assistant/            KI-Assistent (Baustein 5)
-├── docs/
-│   └── screenshots/
-└── tests/
-```
-
-## Einrichtung
-
-1. Python 3 (getestet mit 3.14).
-2. In der Instanz einen Integrationsbenutzer anlegen, nicht admin verwenden:
-   - User ID `svc_itam_loader`, Identity type «Machine», «Web service access only» aktiv (keine Anmeldung an der Oberfläche)
-   - Rollen `sn_cmdb_editor` (IRE-Endpunkt, CMDB schreiben), `import_transformer` und `import_set_loader` (Import Set API)
-3. `.env.example` nach `.env` kopieren und selbst ausfüllen. Die `.env` steht in `.gitignore`.
-4. Verbindung prüfen (nur lesende Abfragen, gibt das Passwort nie aus):
-
-```bash
+cp .env.example .env    # fill in instance URL and integration user
 python3 loader/check_connection.py
+python3 loader/load_testdata.py
+python3 loader/check_data_quality.py
 ```
 
-## Befund auf der Entwicklerinstanz
+Development:
 
-Geprüft am 11.11.2026 auf der eigenen PDI, Release Brazil (Patch 1, Hotfix 1), nur lesend über die Table API:
+```bash
+python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
+.venv/bin/ruff check . && .venv/bin/pytest -q
+python3 testdata/generate_testdata.py   # same seed, byte-identical output
+```
 
-- **Demo-Daten:** Die PDI enthält bereits 855 Computer, 643 Benutzer und 427 Standorte. Die Testdaten werden deshalb über `company = Muster AG` getrennt.
-- **Felder und Statuswerte:** Alle verwendeten Felder existieren auf `cmdb_ci_computer`. `install_status`: 1 Installed, 2 On Order, 3 In Maintenance, 4 Pending Install, 5 Pending Repair, 6 In Stock, 7 Retired, 8 Stolen, 100 Absent.
-- **Klassen:** Computer, Windows-/Linux-Server, Drucker, IP Switch und IP Firewall sind vorhanden. Eine Klasse für Smartphones fehlt; `cmdb_ci_comm` hätte keine IRE-Regel. Smartphones laufen deshalb als `cmdb_ci_hardware`.
-- **IRE:** Für alle Hardware-Klassen gilt die «Hardware Rule». Reihenfolge: product_instance_id, Seriennummer mit Typ, Seriennummer, Name, MAC und Name (Netzwerkadapter), IP und MAC, MAC, IP.
-- **REST-Rechte:** Der Endpunkt `/now/identifyreconcile` verlangt eine der Rollen `asset`, `itil` oder `sn_cmdb_editor`.
-- **Assets aus CIs:** ServiceNow legt zu jedem neuen CI automatisch ein Asset (`alm_hardware`) an, asynchron über den Job «Asset – Create asset delayed sync» (alle 15 Minuten). Massgeblich ist die Modellkategorie mit Asset-Klasse. Die 6 Firewalls (`cmdb_ci_ip_firewall`) haben keine solche Kategorie, deshalb entstehen aus 203 CIs 197 Assets. Umgekehrt löscht ServiceNow beim Löschen eines Assets das zugehörige CI mit.
-- **Asset Management:** Hardware Asset Management (sn_hamp) ist nicht installiert, wie in der Community beschrieben. Software Asset Management ist noch nicht aktiv (Tabelle `cmdb_sam_sw_install` fehlt). Die Aktivierung wird in Baustein 4 geprüft.
+## Repository layout
 
-Weitere Grenzen:
+```
+testdata/     generator and generated CSV files, ground_truth.json
+loader/       REST client, Import Set loader, data quality check, reset script
+servicenow/   transform scripts that run on the instance
+docs/         import run, data quality result, screenshots
+tests/        pytest suite (generator, staging definitions, transform script contract)
+```
 
-- Eine PDI wird nach längerer Inaktivität zurückgesetzt. Konfiguration deshalb laufend als Update Set exportieren und in `servicenow/` ablegen.
-- Lizenzmetriken und Preise in den Testdaten sind vereinfacht und fiktiv. Sie entsprechen nicht zwingend den Lizenzbedingungen der Hersteller.
+## What I would do in production
 
-## Demo-Ablauf
+- **Real sources instead of CSV:** Service Graph Connectors (e.g. SCCM, Intune) or Discovery, so identification data comes from the devices themselves.
+- **IntegrationHub ETL / Robust Transform Engine** instead of calling the IRE from a transform script; same identification rules, less custom code.
+- **Normalization:** Hardware and software normalization (HAM/SAM Pro) instead of tolerating manufacturer variants; a lookup of canonical names before load.
+- **Reconciliation per source and attribute**, plus staleness rules, so the most trustworthy source wins per field.
+- **CMDB Health** (completeness, correctness, compliance) and de-duplication tasks instead of hand-made reports.
+- **Least privilege and secrets:** one integration user per interface, OAuth instead of basic auth, secrets in a vault.
+- **Change management for configuration:** scoped app or update sets in source control, ATF tests, promotion via pipeline.
+- **Operations:** scheduled imports, alerting on transform errors, cleanup job for old import sets.
 
-Folgt, sobald die Bausteine stehen. Geplant: rund 10 Minuten für ein Vorstellungsgespräch.
+## Limits
+
+- Personal developer instance (PDI); it is reclaimed after inactivity, so configuration is kept in this repository.
+- License metrics and prices in the test data are simplified and fictitious.
+- All names, serial numbers and addresses are invented. The e-mail domain `muster.example` uses the reserved `.example` TLD.
