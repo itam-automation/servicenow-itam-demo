@@ -11,7 +11,7 @@
 | 0 | Test data generator with injected errors (ground truth) and tests | done |
 | 1 | Personal developer instance (release Brazil), integration user | done |
 | 2 | CMDB load via Import Sets and Transform Maps, duplicate handling via IRE, data quality reports | **done** |
-| 3 | Catalog item «Request laptop» with Flow Designer, business rule, ATF test | open (milestone 2) |
+| 3 | Catalog item «Laptop anfordern» with Flow Designer, business rule, ATF test | **done** |
 | 4 | Software Asset Management: entitlements, installations, compliance | open (milestone 3) |
 | 5 | AI assistant, technically read-only | open (milestone 3) |
 
@@ -28,6 +28,7 @@ In IT Asset Management the CMDB is fed by several sources: an inventory export, 
 | 3 | Route every device row through the **IRE** in an onBefore transform script; normalize serial numbers; a reconciliation rule makes the inventory authoritative for organisational attributes | `servicenow/device_transform_onbefore.js` |
 | 4 | Measure **data quality** in ServiceNow (10 reports) and against the ground truth (Python check, result as a number) | `loader/check_data_quality.py`, `docs/data_quality.md` |
 | 5 | Reset the instance safely (select by creator, count first, verify totals) | `loader/reset_testdata.py` |
+| 6 | Request a laptop in the **Service Catalog**: approval by the asset management group, an in-stock device of the requested model is assigned, a fulfilment task is created (or a procurement task if nothing is in stock); a **business rule** keeps the asset lifecycle consistent; an **ATF test** checks it | Flow Designer, `servicenow/business_rule_asset_lifecycle.js`, `servicenow/atf_lifecycle_test.js` |
 
 ## Architecture
 
@@ -68,6 +69,26 @@ Final run on 11 Nov 2026, starting from an instance without any Muster AG data:
 | **CMDB grouped by manufacturer: spelling variants** | |
 | ![Manufacturer variants](docs/screenshots/05_cmdb_manufacturer_variants.jpg) | |
 
+## Laptop request (milestone 2)
+
+Catalog item **«Laptop anfordern»** (variables: requested for, model, justification) with the flow **«Laptop anfordern»**:
+
+1. Get catalog variables
+2. Ask for approval: group «Muster AG IT-Asset-Management», anyone approves
+3. If approved: look up the first hardware asset in stock whose name contains the requested model
+4. If found: set the asset to *In use* and assign it to the requester, create the task «Laptop aus dem Lager vorbereiten und übergeben»
+5. Otherwise: create the task «Laptop nicht auf Lager: Modell beschaffen»
+
+Business rule **«ITAM: Lifecycle-Status Hardware-Asset»** (`alm_hardware`, before insert/update) adds what the platform rules do not cover: a new asset takes over the lifecycle status of its CI, and an asset that goes into use gets its assignment date. A one-time fix script aligned the 61 existing assets.
+
+ATF test **«ITAM: Lifecycle-Status Hardware-Asset»**: 4 Jasmine specs, 9/9 assertions passed, changes rolled back automatically.
+
+End-to-end run: request REQ0010002 for a ThinkPad X1 Carbon Gen 11 was approved; asset MA-000007 moved from *In stock* to *In use*, assigned to the requester with assignment date, the linked CI followed (*Installed*), task SCTASK0010002 was created for the asset management group.
+
+| Flow «Laptop anfordern» | ATF test result |
+|---|---|
+| ![Flow](docs/screenshots/06_flow_laptop_request.jpg) | ![ATF](docs/screenshots/07_atf_test_passed.jpg) |
+
 ## Findings on the platform
 
 Things the run made visible, each verified on the instance:
@@ -75,6 +96,9 @@ Things the run made visible, each verified on the instance:
 - **A matching serial number is not enough when name and MAC contradict it.** Three scan records carried the serial number in another spelling (lowercase, trailing space), an FQDN name and the MAC of a second network card. The transform script normalizes serials, so they are identical afterwards, yet the IRE still created separate CIs for them; in dry runs a payload with the serial number alone did match. 9 of 12 scan duplicates were merged, the other 3 are caught by report «ITAM DQ 7». The lesson: clean, consistent identifiers per source matter more than extra matching logic.
 - **Reconciliation rules protect attributes.** The network scan reports FQDN host names. A reconciliation rule makes the inventory export authoritative for name, user, location and other organisational attributes, so a scan update does not overwrite them.
 - **Assets are created from CIs automatically**, asynchronously by the job «Asset – Create asset delayed sync» (every 15 minutes), based on the model category. The 6 firewalls have no model category with an asset class, so 203 CIs became 197 assets. Deleting an asset deletes its CI as well.
+- **Assets created from CIs always start as *In use*.** 61 of 197 assets therefore contradicted their CI (in stock, retired, in maintenance), and the laptop request found nothing in stock. The business rule now takes the status over from the CI; a fix script corrected the existing assets without touching the CIs.
+- **The platform clears the assignee of an asset in stock** (rule «Clear Assigned To on update»). Assigning a stock device means setting *In use* and the user in the same update, which is what the flow does. The ATF test documents this behaviour.
+- **ATF execution is disabled by default** on a developer instance (`sn_atf.runner.enabled`).
 - **Company names match case-insensitively.** The variant «LENOVO» was matched to the existing «Lenovo» on load, so it never became a data quality issue.
 - **The platform fills a missing location from the assigned user.**
 - **Hardware Asset Management (sn_hamp) is not available on a developer instance**, and Software Asset Management is not active by default. This project therefore works with the base CMDB and base asset tables.
